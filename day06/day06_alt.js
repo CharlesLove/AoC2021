@@ -27,46 +27,44 @@ function calculateFish(inDays)
 	let input = fs.readFileSync(filename).toString('utf-8');
 	input = input.split(",");
 
-	let fishDict = new Object();
-	let totalFish = BigInt(input.length);
+	let fish = new Array(9);
 
 	// set initial fishDict
 	for(let i = 0; i < 9; i++){
-		fishDict[i] = 0n;
+		fish[i] = 0;
 	}
 
 	// fill fish dict
 	for(let i = 0; i < input.length; i++)
 	{
 		let curTime = parseInt(input[i]);
-		fishDict[curTime]++;
+		//console.log(curTime);
+
+		fish[curTime]++;
 	}
+
+	//console.log(fish);
 
 	// iterate through the days
 	for(let d = 0; d < inDays; d++)
 	{
-		let newFishCount = 0n;
-		console.log("--After " + (d+1) + " day(s)--");
-
-		for(let f = 0; f < 9; f++)
-		{
-			if(f === 0)
-			{
-				newFishCount = fishDict[0];
-				fishDict[0] = 0n;
-			}
-			else
-			{
-				fishDict[f - 1] = fishDict[f];
-			}
-		}
-
-		fishDict[8] = newFishCount;
-		fishDict[6] += newFishCount;
-		totalFish += newFishCount;
+		let fish0 = fish[0];
+		fish[0] = fish[1];
+		fish[1] = fish[2];
+		fish[2] = fish[3];
+		fish[3] = fish[4];
+		fish[4] = fish[5];
+		fish[5] = fish[6];
+		fish[6] = fish[7] + fish0;
+		fish[7] = fish[8];
+		fish[8] = fish0;
+		console.log("Day: ", d);
 	}
+
+	let totalFish = fish.reduce((a,b) => a + b);
 	
-	console.log("Total Fish: " + totalFish);
+	console.log("Total Fish:")
+	console.log(totalFish);
 }
 
 console.log("---Part 1---");
