@@ -27,32 +27,34 @@ let fs = require("fs");
 
 
 let input = ['3','4','3','1','2'];
+let days = 80n;
 
 let templateDict = new Object;
 let initialFishDict = new Object;
+let semiFinalFishDict = new Object;
 
-function calculateFish(inDays)
+let fishDict = new Object();
+let totalFish = BigInt(input.length);
+
+// set initial fishDict
+for(let i = 0; i < 9; i++){
+	fishDict[i] = 0n;
+}
+templateDict = Object.assign(Object,fishDict);
+
+// fill fish dict
+for(let i = 0; i < input.length; i++)
 {
-	//let input = fs.readFileSync(filename).toString('utf-8');
-	//input = input.split(",");
+	let curTime = parseInt(input[i]);
+	fishDict[curTime]++;
+}
 
-	let fishDict = new Object();
-	let totalFish = BigInt(input.length);
+initialFishDict = Object.assign(Object,fishDict);
 
-	// set initial fishDict
-	for(let i = 0; i < 9; i++){
-		fishDict[i] = 0n;
-	}
-	templateDict = Object.assign(Object,fishDict);
+function calculateFishSmall(inDays, dictInput)
+{
 
-	// fill fish dict
-	for(let i = 0; i < input.length; i++)
-	{
-		let curTime = parseInt(input[i]);
-		fishDict[curTime]++;
-	}
-
-	initialFishDict = Object.assign(Object,fishDict);
+	fishDict = dictInput;
 
 	// iterate through the days
 	for(let d = 0; d < inDays; d++)
@@ -79,24 +81,61 @@ function calculateFish(inDays)
 	}
 	//console.log(fishDict);
 	
-	console.log("Total Fish (correct): " + totalFish);
+	console.log("Total Fish (new): " + totalFish);
 	console.log(fishDict);
 }
 
-let days = 9n;
-let newFish = 0n;
-let semiFinalFishDict = templateDict;
-calculateFish(days);
+let newEights = 0n;
+let newSixes = 0n;
+
+for(let i = 0; i < 9; i++){
+	semiFinalFishDict[i] = 0n;
+}
+
+//calculateFish(days);
 
 console.log(initialFishDict);
 
+// calculate resets and new sixes
 for(let i = 0n; i < 9n; i++)
 {
-	newFish += (days / (i + 1n)) * initialFishDict[i];
+	let resets = 0n;
+	resets = (days - i) / 9n;
+	if(days >= i) resets++;
+
+	resets = resets * BigInt(initialFishDict[i]);
+
+	totalFish += resets;
+	newSixes += resets;
 }
 
+semiFinalFishDict[6] = newSixes;
+
+console.log(semiFinalFishDict);
+
+calculateFishSmall(days, semiFinalFishDict);
+
+// calculate just the new sixes
+
+// day 8 resets
+// day 7 resets
+// day 6 resets
+// day 5 resets
+// day 4 resets
+// day 3 resets
+// day 2 resets
+// day 1 resets
+// after 1 day resets, then every 9
+//let oneResets = (days - 1) / 9;
+//if(days >= 1) oneResets++;
+// day 0 resets
+//console.log("Day 0 resets:" + (initialFishDict[0] * 9  ))
+
+
 // should be 6 for 9 days
-console.log(newFish);
+
+console.log(newSixes);
+//console.log(newFish);
 
 // after 9 days a new fish with timer 6 is created
 
