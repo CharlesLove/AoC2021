@@ -2,7 +2,7 @@ let fs = require("fs");
 // part 1
 {
 	let input = fs.readFileSync("day03/inputa.txt").toString('utf-8');
-	//let input = fs.readFileSync("day03/bigboy.txt").toString('utf-8');
+	//let input = fs.readFileSync("day03/big.boy").toString('utf-8');
 	input = input.split("\n");
 
 	let lineLength = input[0].length;
@@ -40,7 +40,7 @@ let fs = require("fs");
 console.log("---Part 2---");
 {
 	let input = fs.readFileSync("day03/inputa.txt").toString('utf-8');
-	//let input = fs.readFileSync("day03/bigboy.txt").toString('utf-8');
+	//let input = fs.readFileSync("day03/big.boy").toString('utf-8');
 	input = input.split("\n");
 
 	let lineLength = input[0].length;

@@ -1,5 +1,5 @@
 let fs = require("fs");
-let filename = "day05/big_boy.txt";
+let filename = "day05/big.boy";
 
 // part 1
 console.log("---Part 1---");

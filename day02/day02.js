@@ -2,7 +2,7 @@ let fs = require("fs");
 // part 1
 {
 	//let input = fs.readFileSync("day02/inputa.txt").toString('utf-8');
-	let input = fs.readFileSync("day02/bigboy.txt").toString('utf-8');
+	let input = fs.readFileSync("day02/big.boy").toString('utf-8');
 	input = input.split("\n");
 
 	let horizontal = depth = 0;
@@ -36,7 +36,7 @@ let fs = require("fs");
 
 {
 	//let input = fs.readFileSync("day02/inputa.txt").toString('utf-8');
-	let input = fs.readFileSync("day02/bigboy.txt").toString('utf-8');
+	let input = fs.readFileSync("day02/big.boy").toString('utf-8');
 	input = input.split("\n");
 
 	let horizontal = depth = aim = 0;

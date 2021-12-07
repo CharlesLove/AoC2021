@@ -17,15 +17,15 @@ switch(filePicker){
 		gridSize = 1000;
 		break;
 	case 2:
-		filename = "day05/big_boy.txt";
+		filename = "day05/big.boy";
 		gridSize = 6400;
 		break;
 	case 3:
-		filename = "day05/bigger_boy.txt";
+		filename = "day05/bigger.boy";
 		gridSize = 10000;
 		break;
 	case 4:
-		filename = "day05/biggest_boy.txt";
+		filename = "day05/biggest.boy";
 		gridSize = 100000;
 		//bigGrid = true;
 		break;

@@ -2,7 +2,7 @@ let fs = require("fs");
 // part 1
 {
 	let input = fs.readFileSync("day04/test_input.txt").toString('utf-8');
-	//let input = fs.readFileSync("day04/bigboy.txt").toString('utf-8');
+	//let input = fs.readFileSync("day04/big.boy").toString('utf-8');
 	input = input.split("\n");
 
 	//console.log(input);

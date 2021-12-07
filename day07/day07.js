@@ -20,7 +20,7 @@ switch(filePicker){
 		filename = "day07/input.txt";
 		break;
 	case 2:
-		filename = "day07/bigboy.txt";
+		filename = "day07/big.boy";
 		break;
 }
 

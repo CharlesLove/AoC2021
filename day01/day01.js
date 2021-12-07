@@ -6,7 +6,7 @@ let fs = require("fs");
 	var largerCount = 0;
 
 	//var input = fs.readFileSync("day01/d01a_input.txt").toString('utf-8');
-	var input = fs.readFileSync("day01/bigboy.txt").toString('utf-8');
+	var input = fs.readFileSync("day01/big.boy").toString('utf-8');
 	input = input.split("\n");
 
 	for(let i = 0; i < input.length; i++)
@@ -30,7 +30,7 @@ let fs = require("fs");
 	var largerCount = 0;
 
 	//var input = fs.readFileSync("day01/d01b_input.txt").toString('utf-8');
-	var input = fs.readFileSync("day01/bigboy.txt").toString('utf-8');
+	var input = fs.readFileSync("day01/big.boy").toString('utf-8');
 	input = input.split("\n");
 
 	for(let i = 2; i < input.length; i++)

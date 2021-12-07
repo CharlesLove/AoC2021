@@ -7,7 +7,7 @@ part1:
 {
 	break part1;
 	//let input = fs.readFileSync("day04/input.txt").toString('utf-8');
-	let input = fs.readFileSync("day04/bigboy.txt").toString('utf-8');
+	let input = fs.readFileSync("day04/big.boy").toString('utf-8');
 	input = input.split("\n");
 	input = input.filter(e => e);
 	
@@ -95,7 +95,7 @@ part1:
 //console.log("---Part 2---");
 {
 	//let input = fs.readFileSync("day04/input.txt").toString('utf-8');
-	let input = fs.readFileSync("day04/bigboy.txt").toString('utf-8');
+	let input = fs.readFileSync("day04/big.boy").toString('utf-8');
 	input = input.split("\n");
 	input = input.filter(e => e);
 
