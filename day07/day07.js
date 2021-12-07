@@ -117,6 +117,8 @@ function calculateComplicatedFuel()
 		let sum = 0;
 		let minimum = input[0];
 		let maximum = input[input.length - 1];
+
+		console.log(maximum);
 	
 		for(let i = 0; i < input.length; i++)
 		{
@@ -124,6 +126,7 @@ function calculateComplicatedFuel()
 		}
 	
 		let average = sum / input.length;
+		//average = parseInt(average);
 		console.log(average);
 		//console.log(sum);
 		//console.log(average);
@@ -136,10 +139,13 @@ function calculateComplicatedFuel()
 			else crabDict[input[i]] += 1;
 		}
 		
-		let fuel = Infinity;
+		let fuel = -1n;
+		console.log(fuel);
 		// works with test and my input, but not big boy
 		let floorAverage = Math.floor(average);
-		let ceilAverage = Math.ceil(average)
+		console.log(floorAverage);
+		let ceilAverage = Math.ceil(average);
+		console.log(ceilAverage);
 		//console.log(newPlace);
 		if(Number.isInteger(average)){
 			console.log("Average was an integer! (Lucky you)");
@@ -160,7 +166,7 @@ function calculateComplicatedFuel()
 		
 		function calcLowestFuel(newPlace)
 		{
-			let roundedFuel = 0;
+			let roundedFuel = 0n;
 			// for(let i = minimum; i <= maximum; i++)
 			// {
 			// 	if(crabDict[i] == undefined) continue;
@@ -169,10 +175,12 @@ function calculateComplicatedFuel()
 			// 	console.log(i);
 			// }
 			Object.keys(crabDict).forEach(function(key) {
-				roundedFuel += incStepCalc(Math.abs(key - newPlace)) * crabDict[key];
+				roundedFuel += BigInt(incStepCalc(Math.abs(key - newPlace)) * crabDict[key]);
 			});
 
-			if(roundedFuel < fuel) fuel = roundedFuel;
+			if(roundedFuel < fuel || fuel === -1n) fuel = roundedFuel;
+			console.log("Currently lowest fuel is:");
+			console.log(fuel);
 		}
 	}
 
