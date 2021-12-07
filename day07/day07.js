@@ -10,7 +10,8 @@ var myArgs = process.argv.slice(2);
 let filename = "";
 
 let filePicker = parseInt(myArgs[0]);
-let isSmart = parseInt(myArgs[1]);
+// default to isSmart without parameters
+let isSmart = myArgs[1] !== undefined ? parseInt(myArgs[1]) : 1;
 
 switch(filePicker){
 	case 0:
