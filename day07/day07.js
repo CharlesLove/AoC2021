@@ -83,8 +83,6 @@ function calculateComplicatedFuel()
 		let sum = 0;
 		let minimum = input[0];
 		let maximum = input[input.length - 1];
-
-		let median = input[input.length / 2];
 	
 		for(let i = 0; i < input.length; i++)
 		{
@@ -144,13 +142,6 @@ function calculateComplicatedFuel()
 
 
 	}
-
-	function stardardDeviation(array){
-		const n = array.length;
-		const mean = array.reduce((a, b) => a + b) / n;
-		return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a +b) /n);
-	}
-
 }
 
 console.log("---Part 1---");
