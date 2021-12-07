@@ -56,7 +56,7 @@ function calculateMedianFuel()
 	console.log(fuel);
 }
 
-function calculateAverageFuel()
+function calculateComplicatedFuel()
 {
 	let input = fs.readFileSync(filename).toString('utf-8');
 	input = input.split(",").map(Number);
@@ -64,37 +64,99 @@ function calculateAverageFuel()
 	input.sort(numSort);
 	//console.log(input);
 
-	crabDict = new Object();
+	//smartFuelCalc();
+	naiveFuelCalc();
 
-	for(let i = 0; i < input.length; i++)
-	{
-		if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
-		else crabDict[input[i]] += 1;
+	function incStepCalc(steps){
+		let stepCost = 0;
+
+		for(let i = 0; i < steps; i++)
+		{
+			stepCost += i + 1;
+		}
+
+		return stepCost;
 	}
 
+	// only works for test_input
+	function smartFuelCalc(){
+		let sum = 0;
+		let minimum = input[0];
+		let maximum = input[input.length - 1];
 
+		let median = input[input.length / 2];
+	
+		for(let i = 0; i < input.length; i++)
+		{
+			sum += input[i];
+		}
+	
+		let average = Math.ceil(sum / input.length);
+	
+		let newPlace = average;
+	
+		crabDict = new Object();
+	
+		for(let i = 0; i < input.length; i++)
+		{
+			if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
+			else crabDict[input[i]] += 1;
+		}
 
-	let average = input[input.length / 2];
-	console.log("Average: ", median);
+		let fuel = 0;
 
-	let minimum = input[0];
-	let maximum = input[input.length - 1];
-	console.log(minimum + " to " + maximum);
-
-	let fuel = 0;
-
-	for(let i = minimum; i <= maximum; i++)
-	{
-		if(crabDict[i] == undefined) continue;
-		fuel += Math.abs((i - median) * crabDict[i]);
+		for(let i = minimum; i <= maximum; i++)
+		{
+			if(crabDict[i] == undefined) continue;
+			fuel += incStepCalc(Math.abs(i - newPlace)) * crabDict[i];
+		}
+		console.log(fuel);
 	}
 
-	console.log(fuel);
+	function naiveFuelCalc(){
+		let minimum = input[0];
+		let maximum = input[input.length - 1];
+		let bestPosition = minimum;
+		let lowestFuelCost = Infinity;
+
+		crabDict = new Object();
+	
+		for(let i = 0; i < input.length; i++)
+		{
+			if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
+			else crabDict[input[i]] += 1;
+		}
+
+		for(let position = minimum; position <= maximum; position++){
+			let totalPositionCost = 0;
+
+			for(let i = minimum; i <= maximum; i++){
+				if(crabDict[i] == undefined) continue;
+				totalPositionCost += incStepCalc(Math.abs(i - position)) * crabDict[i];
+			}
+
+			if(totalPositionCost < lowestFuelCost){
+				lowestFuelCost = totalPositionCost;
+				bestPosition = position;
+			}
+		}
+		console.log(lowestFuelCost);
+
+
+	}
+
+	function stardardDeviation(array){
+		const n = array.length;
+		const mean = array.reduce((a, b) => a + b) / n;
+		return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a +b) /n);
+	}
+
 }
 
 console.log("---Part 1---");
 calculateMedianFuel();
-// console.log("---Part 2---");
-// calculateFish(256);
+console.log("---Part 2---");
+// 212892967 is too high
+calculateComplicatedFuel();
 // console.log("---Big Boy 1---");
 // calculateFish(9999999n);
