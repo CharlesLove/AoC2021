@@ -223,7 +223,7 @@ function calculatePartTwo(){
 			}
 		});
 
-		console.log("Five Segs");
+		//console.log("Five Segs");
 		// determine how often one of the five segments is included in everything else
 		fiveSegs.forEach(fiveDigitNumber => {
 			let totalUses = 0;
@@ -238,7 +238,7 @@ function calculatePartTwo(){
 				//console.log(allNumber);
 				if(checker(allNumber, fiveDigitNumber)){
 					totalUses++;
-					console.log(allNumber);
+					//console.log(allNumber);
 				}
 			});
 
@@ -260,13 +260,20 @@ function calculatePartTwo(){
 
 		});
 
-		console.log("Six Segs:");
+		//console.log("Six Segs:");
 		// determine how often one of the six segments is included in everything else
 		sixSegs.forEach(sixDigitNumber => {
-			console.log(sixDigitNumber + "\n");
-
-			// SO CLOSE!!!!!
-			if(checker(sixDigitNumber, numArray[2])){
+			// got it!!!!!
+			if(checker(sixDigitNumber, numArray[5])){
+				let union5 = [...new Set([...numArray[1], ...numArray[5]])];
+				if(checker(sixDigitNumber, union5)){
+					numArray[9] = sixDigitNumber;
+				}
+				else{
+					numArray[6] = sixDigitNumber;
+				}
+			}
+			else{
 				numArray[0] = sixDigitNumber;
 			}
 			// else if(checker(numArray[1].concat(numArray[5]))){
