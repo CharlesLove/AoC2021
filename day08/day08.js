@@ -173,7 +173,7 @@ function calculatePartTwo_Old(){
 }
 
 function calculatePartTwo(){
-	let curPanel, outputPanel, inputPanel;
+	let curPanel, outputPanel, inputPanel, total = 0;
 
 	let checker = (arr, target) => target.every(v => arr.includes(v));
 
@@ -260,10 +260,8 @@ function calculatePartTwo(){
 
 		});
 
-		//console.log("Six Segs:");
 		// determine how often one of the six segments is included in everything else
 		sixSegs.forEach(sixDigitNumber => {
-			// got it!!!!!
 			if(checker(sixDigitNumber, numArray[5])){
 				let union5 = [...new Set([...numArray[1], ...numArray[5]])];
 				if(checker(sixDigitNumber, union5)){
@@ -276,21 +274,26 @@ function calculatePartTwo(){
 			else{
 				numArray[0] = sixDigitNumber;
 			}
-			// else if(checker(numArray[1].concat(numArray[5]))){
-			// 	numArray[9]
-			// }
-			// else{
-			// 	numArray[6]
-			// }
-
 		});
 
-
-
+		
 		for (let i = 0; i < numArray.length; i++) {
-			console.log(i + ": " + numArray[i]);
+			numArray[i] = numArray[i].sort().toString();;
 		}
+
+		let panelString = "";
+
+		//console.log(outputPanel);
+
+		for (let i = 0; i < outputPanel.length; i++) {
+			let currentCode = outputPanel[i].split("").sort().toString();
+			curNumberString = numArray.indexOf(currentCode).toString();
+			panelString += curNumberString;
+		}
+
+		total += parseInt(panelString);
 	}
+	console.log(total);
 }
 
 
