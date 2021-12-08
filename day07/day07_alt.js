@@ -30,22 +30,22 @@ console.log("---- Running: " + filename + " ----");
 function numSort(a,b) { return (+a) - (+b);}
 
 let incStepCache = new Object();
+let input = fs.readFileSync(filename).toString('utf-8');
+input = input.split(",").map(Number);
+
+input.sort(numSort);
+//console.log(input);
+
+crabDict = new Object();
+
+for(let i = 0; i < input.length; i++)
+{
+	if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
+	else crabDict[input[i]] += 1;
+}
 
 function calculateMedianFuel()
 {
-	let input = fs.readFileSync(filename).toString('utf-8');
-	input = input.split(",").map(Number);
-	
-	input.sort(numSort);
-	//console.log(input);
-
-	crabDict = new Object();
-
-	for(let i = 0; i < input.length; i++)
-	{
-		if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
-		else crabDict[input[i]] += 1;
-	}
 
 	let median = input[input.length / 2];
 
@@ -63,19 +63,6 @@ function calculateMedianFuel()
 
 function calculateComplicatedFuel()
 {
-	let input = fs.readFileSync(filename).toString('utf-8');
-	input = input.split(",").map(Number);
-
-	input.sort(numSort);
-
-	crabDict = new Object();
-
-	for(let i = 0; i < input.length; i++)
-	{
-		if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
-		else crabDict[input[i]] += 1;
-	}
-
 	let sum = 0;
 
 	let minPos = input[0];
