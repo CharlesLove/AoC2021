@@ -119,6 +119,42 @@ function calculatePartTwo(){
 		});
 		//console.log(allDigits);
 
+		// attempt to find the 5 segment digits
+		fiveSegs.forEach(fDigit => {
+			let intersectionCount = 0;
+			allDigits.forEach(aDigits => {
+				let intersection = aDigits.filter(x => fDigit.includes(x));
+				if(intersection.length === 5){
+					intersectionCount++;
+				}
+			});
+
+			if(intersectionCount === 3){
+				numArray[5] = fDigit;
+			}
+			else if(fDigit !== numArray[3]){
+				numArray[2] = fDigit;
+			}
+		});
+
+		// attempt to find the 6 segment digits
+		sixSegs.forEach(sDigit => {
+			let intersectionCount = 0;
+			allDigits.forEach(aDigits => {
+				let intersection = aDigits.filter(x => sDigit.includes(x));
+				if(intersection.length === 5){
+					intersectionCount++;
+				}
+			});
+
+			if(intersectionCount === 3){
+				numArray[5] = sDigit;
+			}
+			else if(fDigit !== numArray[3]){
+				numArray[2] = sDigit;
+			}
+		});
+
 		for (let i = 0; i < numArray.length; i++) {
 			console.log(i + ": " + numArray[i]);
 			
