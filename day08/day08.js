@@ -1,5 +1,5 @@
 // Run something similar to this for better time keeping
-// time node day06/day06_grid.js 3
+// time node day08/day08.js 3
 
 // try using node's readline feature next time to prevent needing to store the entire
 // .txt in memory
@@ -37,7 +37,6 @@ function calculatePartOne() {
   for (let i = 0; i < input.length; i++) {
     curPanel = input[i].split(" | ");
     outputPanel = curPanel[1].split(" ");
-    //console.log(outputPanel);
 
     outputPanel.forEach((display) => {
       let segCount = display.length;
@@ -118,7 +117,6 @@ function calculatePartTwo() {
 
     fiveSegs.forEach((fiveDigitNumber) => {
       let totalUses = 0;
-      let intersection = [];
 
       allDigits.forEach((allNumber) => {
         if (checker(allNumber, fiveDigitNumber)) {
