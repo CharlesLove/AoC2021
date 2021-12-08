@@ -10,63 +10,55 @@ let filename = "";
 
 let filePicker = parseInt(myArgs[0]);
 
-switch(filePicker){
-	case 0:
-		filename = "day06/test_input.txt";
-		break;
-	case 1:
-		filename = "day06/input.txt";
-		break;
+switch (filePicker) {
+  case 0:
+    filename = "day06/test_input.txt";
+    break;
+  case 1:
+    filename = "day06/input.txt";
+    break;
 }
-
 
 console.log("---- Running: " + filename + " ----");
 
-function calculateFish(inDays)
-{
-	let input = fs.readFileSync(filename).toString('utf-8');
-	input = input.split(",");
+function calculateFish(inDays) {
+  let input = fs.readFileSync(filename).toString("utf-8");
+  input = input.split(",");
 
-	let fishDict = new Object();
-	let totalFish = BigInt(input.length);
+  let fishDict = new Object();
+  let totalFish = BigInt(input.length);
 
-	// set initial fishDict
-	for(let i = 0; i < 9; i++){
-		fishDict[i] = 0n;
-	}
+  // set initial fishDict
+  for (let i = 0; i < 9; i++) {
+    fishDict[i] = 0n;
+  }
 
-	// fill fish dict
-	for(let i = 0; i < input.length; i++)
-	{
-		let curTime = parseInt(input[i]);
-		fishDict[curTime]++;
-	}
+  // fill fish dict
+  for (let i = 0; i < input.length; i++) {
+    let curTime = parseInt(input[i]);
+    fishDict[curTime]++;
+  }
 
-	// iterate through the days
-	for(let d = 0; d < inDays; d++)
-	{
-		let newFishCount = 0n;
-		console.log("--After " + (d+1) + " day(s)--");
+  // iterate through the days
+  for (let d = 0; d < inDays; d++) {
+    let newFishCount = 0n;
+    console.log("--After " + (d + 1) + " day(s)--");
 
-		for(let f = 0; f < 9; f++)
-		{
-			if(f === 0)
-			{
-				newFishCount = fishDict[0];
-				fishDict[0] = 0n;
-			}
-			else
-			{
-				fishDict[f - 1] = fishDict[f];
-			}
-		}
+    for (let f = 0; f < 9; f++) {
+      if (f === 0) {
+        newFishCount = fishDict[0];
+        fishDict[0] = 0n;
+      } else {
+        fishDict[f - 1] = fishDict[f];
+      }
+    }
 
-		fishDict[8] = newFishCount;
-		fishDict[6] += newFishCount;
-		totalFish += newFishCount;
-	}
-	
-	console.log("Total Fish: " + totalFish);
+    fishDict[8] = newFishCount;
+    fishDict[6] += newFishCount;
+    totalFish += newFishCount;
+  }
+
+  console.log("Total Fish: " + totalFish);
 }
 
 console.log("---Part 1---");

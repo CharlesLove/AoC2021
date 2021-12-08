@@ -13,8 +13,8 @@ let fs = require("fs");
 // 1days for 1 fish
 
 // in 18 days how many will each produce
-// 1x4: 
-// (4 + 6 + 2 + 1) * 18 
+// 1x4:
+// (4 + 6 + 2 + 1) * 18
 
 // floor(13 * 18 / 8 - (5 / 2))
 // this math only works for 18 days and the original set (useless)
@@ -25,71 +25,62 @@ let fs = require("fs");
 // 0
 // each 0 would create
 
-
-let input = ['3','4','3','1','2'];
+let input = ["3", "4", "3", "1", "2"];
 let days = 80n;
 
-let templateDict = new Object;
-let initialFishDict = new Object;
-let semiFinalFishDict = new Object;
+let templateDict = new Object();
+let initialFishDict = new Object();
+let semiFinalFishDict = new Object();
 
 let fishDict = new Object();
 let totalFish = BigInt(input.length);
 
 // set initial fishDict
-for(let i = 0; i < 9; i++){
-	fishDict[i] = 0n;
+for (let i = 0; i < 9; i++) {
+  fishDict[i] = 0n;
 }
-templateDict = Object.assign(Object,fishDict);
+templateDict = Object.assign(Object, fishDict);
 
 // fill fish dict
-for(let i = 0; i < input.length; i++)
-{
-	let curTime = parseInt(input[i]);
-	fishDict[curTime]++;
+for (let i = 0; i < input.length; i++) {
+  let curTime = parseInt(input[i]);
+  fishDict[curTime]++;
 }
 
-initialFishDict = Object.assign(Object,fishDict);
+initialFishDict = Object.assign(Object, fishDict);
 
-function calculateFishSmall(inDays, dictInput)
-{
+function calculateFishSmall(inDays, dictInput) {
+  fishDict = dictInput;
 
-	fishDict = dictInput;
+  // iterate through the days
+  for (let d = 0; d < inDays; d++) {
+    let newFishCount = 0n;
+    //console.log("--After " + (d+1) + " day(s)--");
 
-	// iterate through the days
-	for(let d = 0; d < inDays; d++)
-	{
-		let newFishCount = 0n;
-		//console.log("--After " + (d+1) + " day(s)--");
+    for (let f = 0; f < 9; f++) {
+      if (f === 0) {
+        newFishCount = fishDict[0];
+        fishDict[0] = 0n;
+      } else {
+        fishDict[f - 1] = fishDict[f];
+      }
+    }
 
-		for(let f = 0; f < 9; f++)
-		{
-			if(f === 0)
-			{
-				newFishCount = fishDict[0];
-				fishDict[0] = 0n;
-			}
-			else
-			{
-				fishDict[f - 1] = fishDict[f];
-			}
-		}
+    fishDict[8] = newFishCount;
+    fishDict[6] += newFishCount;
+    totalFish += newFishCount;
+  }
+  //console.log(fishDict);
 
-		fishDict[8] = newFishCount;
-		fishDict[6] += newFishCount;
-		totalFish += newFishCount;
-	}
-	//console.log(fishDict);
-	
-	console.log("Total Fish (new): " + totalFish);
-	console.log(fishDict);
+  console.log("Total Fish (new): " + totalFish);
+  console.log(fishDict);
 }
 
 let newEights = 0n;
 let newSixes = 0n;
 
-for(let i = 0; i < 9; i++){
-	semiFinalFishDict[i] = 0n;
+for (let i = 0; i < 9; i++) {
+  semiFinalFishDict[i] = 0n;
 }
 
 //calculateFish(days);
@@ -97,16 +88,15 @@ for(let i = 0; i < 9; i++){
 console.log(initialFishDict);
 
 // calculate resets and new sixes
-for(let i = 0n; i < 9n; i++)
-{
-	let resets = 0n;
-	resets = (days - i) / 9n;
-	if(days >= i) resets++;
+for (let i = 0n; i < 9n; i++) {
+  let resets = 0n;
+  resets = (days - i) / 9n;
+  if (days >= i) resets++;
 
-	resets = resets * BigInt(initialFishDict[i]);
+  resets = resets * BigInt(initialFishDict[i]);
 
-	totalFish += resets;
-	newSixes += resets;
+  totalFish += resets;
+  newSixes += resets;
 }
 
 semiFinalFishDict[6] = newSixes;
@@ -131,7 +121,6 @@ calculateFishSmall(days, semiFinalFishDict);
 // day 0 resets
 //console.log("Day 0 resets:" + (initialFishDict[0] * 9  ))
 
-
 // should be 6 for 9 days
 
 console.log(newSixes);
@@ -141,4 +130,3 @@ console.log(newSixes);
 
 // new strategy, calculate how many 6s will be created
 // calculate 6s at end
-

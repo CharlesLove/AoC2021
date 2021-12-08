@@ -13,168 +13,159 @@ let filePicker = parseInt(myArgs[0]);
 // default to isSmart without parameters
 let isSmart = myArgs[1] !== undefined ? parseInt(myArgs[1]) : 1;
 
-switch(filePicker){
-	case 0:
-		filename = "day07/test_input.txt";
-		break;
-	case 1:
-		filename = "day07/input.txt";
-		break;
-	case 2:
-		filename = "day07/big.boy";
-		break;
+switch (filePicker) {
+  case 0:
+    filename = "day07/test_input.txt";
+    break;
+  case 1:
+    filename = "day07/input.txt";
+    break;
+  case 2:
+    filename = "day07/big.boy";
+    break;
 }
-
 
 console.log("---- Running: " + filename + " ----");
 
-function numSort(a,b) { return (+a) - (+b);}
+function numSort(a, b) {
+  return +a - +b;
+}
 
 let incStepCache = new Object();
 
-function calculateMedianFuel()
-{
-	let input = fs.readFileSync(filename).toString('utf-8');
-	input = input.split(",").map(Number);
-	
-	input.sort(numSort);
-	//console.log(input);
+function calculateMedianFuel() {
+  let input = fs.readFileSync(filename).toString("utf-8");
+  input = input.split(",").map(Number);
 
-	crabDict = new Object();
+  input.sort(numSort);
+  //console.log(input);
 
-	for(let i = 0; i < input.length; i++)
-	{
-		if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
-		else crabDict[input[i]] += 1;
-	}
+  crabDict = new Object();
 
-	let median = input[input.length / 2];
+  for (let i = 0; i < input.length; i++) {
+    if (crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
+    else crabDict[input[i]] += 1;
+  }
 
-	let minimum = input[0];
-	let maximum = input[input.length - 1];
+  let median = input[input.length / 2];
 
-	let fuel = 0;
+  let minimum = input[0];
+  let maximum = input[input.length - 1];
 
-	Object.keys(crabDict).forEach(function(key) {
-		fuel += Math.abs((key - median) * crabDict[key]);
-	});
+  let fuel = 0;
 
-	console.log(fuel.toString());
+  Object.keys(crabDict).forEach(function (key) {
+    fuel += Math.abs((key - median) * crabDict[key]);
+  });
+
+  console.log(fuel.toString());
 }
 
-function calculateComplicatedFuel()
-{
-	let input = fs.readFileSync(filename).toString('utf-8');
-	input = input.split(",").map(Number);
-	
-	input.sort(numSort);
+function calculateComplicatedFuel() {
+  let input = fs.readFileSync(filename).toString("utf-8");
+  input = input.split(",").map(Number);
 
-	let incStepCache = new Object();
+  input.sort(numSort);
 
-	if(isSmart == 1) smartFuelCalc();
-	else naiveFuelCalc();
+  let incStepCache = new Object();
 
-	function incStepCalc(steps){
-		let stepCost = 0;
+  if (isSmart == 1) smartFuelCalc();
+  else naiveFuelCalc();
 
-		if(incStepCache[steps] !== undefined){
-			return incStepCache[steps];
-		}
+  function incStepCalc(steps) {
+    let stepCost = 0;
 
-		
-		if(incStepCache[steps - 1] !== undefined){
-			stepCost += incStepCache[steps - 1] + steps;
-		}
-		else{
-			for(let i = 0; i < steps; i++)
-			{
-				stepCost += i + 1;
-			}
-		}
+    if (incStepCache[steps] !== undefined) {
+      return incStepCache[steps];
+    }
 
-		incStepCache[steps] = stepCost;
-		return stepCost;
-	}
+    if (incStepCache[steps - 1] !== undefined) {
+      stepCost += incStepCache[steps - 1] + steps;
+    } else {
+      for (let i = 0; i < steps; i++) {
+        stepCost += i + 1;
+      }
+    }
 
-	function smartFuelCalc(){
-		console.log("--Smart calculation--")
+    incStepCache[steps] = stepCost;
+    return stepCost;
+  }
 
-		let sum = 0;
-		let minimum = input[0];
-		let maximum = input[input.length - 1];
-	
-		for(let i = 0; i < input.length; i++)
-		{
-			sum += input[i];
-		}
-	
-		let average = sum / input.length;
+  function smartFuelCalc() {
+    console.log("--Smart calculation--");
 
-		crabDict = new Object();
-		
-		for(let i = 0; i < input.length; i++)
-		{
-			if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
-			else crabDict[input[i]] += 1;
-		}
-		
-		let fuel = -1n;
-		
-		let floorAverage = Math.floor(average);
-		let ceilAverage = Math.ceil(average);
+    let sum = 0;
+    let minimum = input[0];
+    let maximum = input[input.length - 1];
 
-		if(Number.isInteger(average)){
-			calcLowestFuel(average);
-		}
-		else{
-			calcLowestFuel(floorAverage);
-			calcLowestFuel(ceilAverage);
-		} 
-		console.log(fuel.toString());
+    for (let i = 0; i < input.length; i++) {
+      sum += input[i];
+    }
 
-		
-		function calcLowestFuel(newPlace)
-		{
-			let roundedFuel = 0n;
-			Object.keys(crabDict).forEach(function(key) {
-				roundedFuel += BigInt(incStepCalc(Math.abs(key - newPlace)) * crabDict[key]);
-			});
+    let average = sum / input.length;
 
-			if(roundedFuel < fuel || fuel === -1n) fuel = roundedFuel;
-		}
-	}
+    crabDict = new Object();
 
-	function naiveFuelCalc(){
-		console.log("--Naive Calculation--")
-		let minimum = input[0];
-		let maximum = input[input.length - 1];
-		let bestPosition = minimum;
-		let lowestFuelCost = -1n;
+    for (let i = 0; i < input.length; i++) {
+      if (crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
+      else crabDict[input[i]] += 1;
+    }
 
-		crabDict = new Object();
-	
-		for(let i = 0; i < input.length; i++)
-		{
-			if(crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
-			else crabDict[input[i]] += 1;
-		}
+    let fuel = -1n;
 
-		for(let position = minimum; position <= maximum; position++){
-			let totalPositionCost = 0n;
+    let floorAverage = Math.floor(average);
+    let ceilAverage = Math.ceil(average);
 
-			Object.keys(crabDict).forEach(function(key) {
-				totalPositionCost += BigInt(incStepCalc(Math.abs(key - position)) * crabDict[key]);
-			});
+    if (Number.isInteger(average)) {
+      calcLowestFuel(average);
+    } else {
+      calcLowestFuel(floorAverage);
+      calcLowestFuel(ceilAverage);
+    }
+    console.log(fuel.toString());
 
-			if(totalPositionCost < lowestFuelCost || lowestFuelCost === -1n){
-				lowestFuelCost = totalPositionCost;
-				bestPosition = position;
-			}
-		}
-		console.log(lowestFuelCost);
+    function calcLowestFuel(newPlace) {
+      let roundedFuel = 0n;
+      Object.keys(crabDict).forEach(function (key) {
+        roundedFuel += BigInt(
+          incStepCalc(Math.abs(key - newPlace)) * crabDict[key]
+        );
+      });
 
+      if (roundedFuel < fuel || fuel === -1n) fuel = roundedFuel;
+    }
+  }
 
-	}
+  function naiveFuelCalc() {
+    console.log("--Naive Calculation--");
+    let minimum = input[0];
+    let maximum = input[input.length - 1];
+    let bestPosition = minimum;
+    let lowestFuelCost = -1n;
+
+    crabDict = new Object();
+
+    for (let i = 0; i < input.length; i++) {
+      if (crabDict[input[i]] == undefined) crabDict[input[i]] = 1;
+      else crabDict[input[i]] += 1;
+    }
+
+    for (let position = minimum; position <= maximum; position++) {
+      let totalPositionCost = 0n;
+
+      Object.keys(crabDict).forEach(function (key) {
+        totalPositionCost += BigInt(
+          incStepCalc(Math.abs(key - position)) * crabDict[key]
+        );
+      });
+
+      if (totalPositionCost < lowestFuelCost || lowestFuelCost === -1n) {
+        lowestFuelCost = totalPositionCost;
+        bestPosition = position;
+      }
+    }
+    console.log(lowestFuelCost);
+  }
 }
 
 console.log("---Part 1---");
