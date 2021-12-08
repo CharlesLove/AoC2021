@@ -68,9 +68,66 @@ function calculatePartOne(){
 	}
 	console.log(partOneDigitCount);
 }
+function calculatePartTwo(){
+	let curPanel, outputPanel, inputPanel;
+	let partOneDigitCount = 0;
+	for(let i = 0; i < input.length / input.length; i++){
+		let topleft, top, topright, middle, bottomleft, bottom, bottomright;
+
+		curPanel = input[i].split(" | ");
+		inputPanel = curPanel[0].split(" ");
+		outputPanel = curPanel[1].split(" ");
+		//console.log(inputPanel);
+
+		let numArray = new Array(10);
+		let fiveSegs = [];
+		let sixSegs = [];
+
+		let allDigits = [];
+
+		inputPanel.forEach(display => {
+			let segCount = display.length;
+
+			allDigits.push(display.split(''));
+
+			// get unique digits
+			switch (segCount) {
+				case 2: // 1
+					numArray[1] = display.split('');
+					break;
+				case 4: // 4
+					numArray[4] = display.split('');
+					break;
+				case 3: // 7
+					numArray[7] = display.split('');
+					break;
+				case 7: // 8
+					numArray[8] = display.split('');
+					break;
+				
+				case 5: // 2,3,5
+					fiveSegs.push(display.split(''));
+					break;
+				
+				case 6: // 0,6,9
+					sixSegs.push(display.split(''));
+					break;
+			
+				default:
+					break;
+			}
+		});
+		//console.log(allDigits);
+
+		for (let i = 0; i < numArray.length; i++) {
+			console.log(i + ": " + numArray[i]);
+			
+		}
+	}
+}
 
 
 console.log("---Part 1---");
 calculatePartOne();
 console.log("---Part 2---");
-//calculateComplicatedFuel();
+calculatePartTwo();
