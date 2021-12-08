@@ -175,15 +175,7 @@ function calculatePartTwo_Old(){
 function calculatePartTwo(){
 	let curPanel, outputPanel, inputPanel;
 
-	class digitInfo {
-		constructor(digit, used_in, used_out, seg){
-			this.digit = digit;
-			this.used_in = used_in;
-			this.used_out = used_out;
-			this.seg = seg;
-		}
-
-	};
+	let checker = (arr, target) => target.every(v => arr.includes(v));
 
 	for(let i = 0; i < input.length; i++){
 
@@ -231,34 +223,58 @@ function calculatePartTwo(){
 			}
 		});
 
+		console.log("Five Segs");
 		// determine how often one of the five segments is included in everything else
 		fiveSegs.forEach(fiveDigitNumber => {
-			console.log(fiveDigitNumber);
 			let totalUses = 0;
+			let intersection = [];
+			//console.log(fiveDigitNumber + "\n");
+			//fiveDigitNumber = fiveDigitNumber.sort();
+			//console.log(fiveDigitNumber + "\n");
+			//console.log(fiveDigitNumber + "\n");
 
 			allDigits.forEach(allNumber => {
-				let intersection = allNumber.filter(x => fiveDigitNumber.includes(x));
-				if(intersection.length === 5){
+				//allNumber = allNumber.sort();
+				//console.log(allNumber);
+				if(checker(allNumber, fiveDigitNumber)){
 					totalUses++;
+					console.log(allNumber);
 				}
 			});
 
-			console.log(totalUses);
+			//console.log(totalUses);
 
-			switch (totalUses - 1) {
-				case 1:
+			switch (totalUses) {
+				case 2:
 					numArray[2] = fiveDigitNumber;
 					break;
-				case 2:
-					numArray[3] = fiveDigitNumber;
-					
-					break;
 				case 3:
+					numArray[3] = fiveDigitNumber;
+					break;
+				case 4:
 					numArray[5] = fiveDigitNumber;
 					break;
 				default:
 					break;
 			}
+
+		});
+
+		console.log("Six Segs:");
+		// determine how often one of the six segments is included in everything else
+		sixSegs.forEach(sixDigitNumber => {
+			console.log(sixDigitNumber + "\n");
+
+			// SO CLOSE!!!!!
+			if(checker(sixDigitNumber, numArray[2])){
+				numArray[0] = sixDigitNumber;
+			}
+			// else if(checker(numArray[1].concat(numArray[5]))){
+			// 	numArray[9]
+			// }
+			// else{
+			// 	numArray[6]
+			// }
 
 		});
 
