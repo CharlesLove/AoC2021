@@ -71,7 +71,7 @@ function calculatePartOne(){
 	}
 	console.log(partOneDigitCount);
 }
-function calculatePartTwo(){
+function calculatePartTwo_Old(){
 	let curPanel, outputPanel, inputPanel;
 	let partOneDigitCount = 0;
 	for(let i = 0; i < input.length; i++){
@@ -168,6 +168,104 @@ function calculatePartTwo(){
 		for (let i = 0; i < numArray.length; i++) {
 			console.log(i + ": " + numArray[i]);
 			
+		}
+	}
+}
+
+function calculatePartTwo(){
+	let curPanel, outputPanel, inputPanel;
+
+	class digitInfo {
+		constructor(digit, used_in, used_out, seg){
+			this.digit = digit;
+			this.used_in = used_in;
+			this.used_out = used_out;
+			this.seg = seg;
+		}
+
+	};
+
+	for(let i = 0; i < input.length; i++){
+
+		curPanel = input[i].split(" | ");
+		inputPanel = curPanel[0].split(" ");
+		outputPanel = curPanel[1].split(" ");
+		//console.log(inputPanel);
+		let numArray = new Array(10);
+
+		let fiveSegs = [];
+		let sixSegs = [];
+
+		let allDigits = [];
+
+		inputPanel.forEach(display => {
+			let segCount = display.length;
+
+			allDigits.push(display.split(''));
+
+			// get unique digits
+			switch (segCount) {
+				case 2: // 1
+					numArray[1] = display.split('');
+					break;
+				case 4: // 4
+					numArray[4] = display.split('');
+					break;
+				case 3: // 7
+					numArray[7] = display.split('');
+					break;
+				case 7: // 8
+					numArray[8] = display.split('');
+					break;
+				
+				case 5: // 2,3,5
+					fiveSegs.push(display.split(''));
+					break;
+				
+				case 6: // 0,6,9
+					sixSegs.push(display.split(''));
+					break;
+			
+				default:
+					break;
+			}
+		});
+
+		// determine how often one of the five segments is included in everything else
+		fiveSegs.forEach(fiveDigitNumber => {
+			console.log(fiveDigitNumber);
+			let totalUses = 0;
+
+			allDigits.forEach(allNumber => {
+				let intersection = allNumber.filter(x => fiveDigitNumber.includes(x));
+				if(intersection.length === 5){
+					totalUses++;
+				}
+			});
+
+			console.log(totalUses);
+
+			switch (totalUses - 1) {
+				case 1:
+					numArray[2] = fiveDigitNumber;
+					break;
+				case 2:
+					numArray[3] = fiveDigitNumber;
+					
+					break;
+				case 3:
+					numArray[5] = fiveDigitNumber;
+					break;
+				default:
+					break;
+			}
+
+		});
+
+
+
+		for (let i = 0; i < numArray.length; i++) {
+			console.log(i + ": " + numArray[i]);
 		}
 	}
 }
