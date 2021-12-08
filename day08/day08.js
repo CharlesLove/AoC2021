@@ -29,15 +29,9 @@ switch(filePicker){
 
 console.log("---- Running: " + filename + " ----");
 
-function numSort(a,b) { return (+a) - (+b);}
-
-let incStepCache = new Object();
 let input = fs.readFileSync(filename).toString('utf-8');
 input = input.split("\n");
 input = input.filter(e => e);
-
-//input.sort(numSort);
-//console.log(input);
 
 function calculatePartOne(){
 	let curPanel, outputPanel;
@@ -71,106 +65,6 @@ function calculatePartOne(){
 	}
 	console.log(partOneDigitCount);
 }
-function calculatePartTwo_Old(){
-	let curPanel, outputPanel, inputPanel;
-	let partOneDigitCount = 0;
-	for(let i = 0; i < input.length; i++){
-		let topleft, top, topright, middle, bottomleft, bottom, bottomright;
-
-		curPanel = input[i].split(" | ");
-		inputPanel = curPanel[0].split(" ");
-		outputPanel = curPanel[1].split(" ");
-		//console.log(inputPanel);
-
-		let numArray = new Array(10);
-		let fiveSegs = [];
-		let sixSegs = [];
-
-		let allDigits = [];
-
-		inputPanel.forEach(display => {
-			let segCount = display.length;
-
-			allDigits.push(display.split(''));
-
-			// get unique digits
-			switch (segCount) {
-				case 2: // 1
-					numArray[1] = display.split('');
-					break;
-				case 4: // 4
-					numArray[4] = display.split('');
-					break;
-				case 3: // 7
-					numArray[7] = display.split('');
-					break;
-				case 7: // 8
-					numArray[8] = display.split('');
-					break;
-				
-				case 5: // 2,3,5
-					fiveSegs.push(display.split(''));
-					break;
-				
-				case 6: // 0,6,9
-					sixSegs.push(display.split(''));
-					break;
-			
-				default:
-					break;
-			}
-		});
-		//console.log(allDigits);
-
-		// attempt to find the 5 segment digits
-		fiveSegs.forEach(fDigit => {
-			let intersectionCount = 0;
-			allDigits.forEach(aDigits => {
-				let intersection = aDigits.filter(x => fDigit.includes(x));
-				if(intersection.length === 5){
-					intersectionCount++;
-				}
-			});
-
-			if(intersectionCount === 3){
-				numArray[3] = fDigit;
-			}
-			else if(fDigit !== numArray[3]){
-				numArray[2] = fDigit;
-			}
-			else{
-				numArray[5] = fDigit;
-			}
-		});
-
-		// attempt to find 9
-
-		// attempt to find the 6 segment digits
-		// sixSegs.forEach(sDigit => {
-		// 	let intersectionCount = 0;
-		// 	let differenceCount = 0;
-		// 	allDigits.forEach(aDigits => {
-		// 		let intersection = aDigits.filter(x => sDigit.includes(x));
-		// 		let difference = aDigits.filter(x => !sDigit.includes(x))
-		// 		if(intersection.length === 5){
-		// 			intersectionCount++;
-		// 		}
-		// 	});
-
-		// 	if(intersectionCount === 3){
-		// 		numArray[5] = sDigit;
-		// 	}
-		// 	else if(fDigit !== numArray[3]){
-		// 		numArray[2] = sDigit;
-		// 	}
-		// });
-
-		for (let i = 0; i < numArray.length; i++) {
-			console.log(i + ": " + numArray[i]);
-			
-		}
-	}
-}
 
 function calculatePartTwo(){
 	let curPanel, outputPanel, inputPanel, total = 0;
@@ -182,7 +76,6 @@ function calculatePartTwo(){
 		curPanel = input[i].split(" | ");
 		inputPanel = curPanel[0].split(" ");
 		outputPanel = curPanel[1].split(" ");
-		//console.log(inputPanel);
 		let numArray = new Array(10);
 
 		let fiveSegs = [];
@@ -223,26 +116,15 @@ function calculatePartTwo(){
 			}
 		});
 
-		//console.log("Five Segs");
-		// determine how often one of the five segments is included in everything else
 		fiveSegs.forEach(fiveDigitNumber => {
 			let totalUses = 0;
 			let intersection = [];
-			//console.log(fiveDigitNumber + "\n");
-			//fiveDigitNumber = fiveDigitNumber.sort();
-			//console.log(fiveDigitNumber + "\n");
-			//console.log(fiveDigitNumber + "\n");
 
 			allDigits.forEach(allNumber => {
-				//allNumber = allNumber.sort();
-				//console.log(allNumber);
 				if(checker(allNumber, fiveDigitNumber)){
 					totalUses++;
-					//console.log(allNumber);
 				}
 			});
-
-			//console.log(totalUses);
 
 			switch (totalUses) {
 				case 2:
@@ -260,7 +142,6 @@ function calculatePartTwo(){
 
 		});
 
-		// determine how often one of the six segments is included in everything else
 		sixSegs.forEach(sixDigitNumber => {
 			if(checker(sixDigitNumber, numArray[5])){
 				let union5 = [...new Set([...numArray[1], ...numArray[5]])];
@@ -282,8 +163,6 @@ function calculatePartTwo(){
 		}
 
 		let panelString = "";
-
-		//console.log(outputPanel);
 
 		for (let i = 0; i < outputPanel.length; i++) {
 			let currentCode = outputPanel[i].split("").sort().toString();
