@@ -13,12 +13,15 @@ let filePicker = parseInt(myArgs[0]);
 
 switch(filePicker){
 	case 0:
-		filename = "day08/test_input.txt";
+		filename = "day08/small_test_input.txt";
 		break;
 	case 1:
-		filename = "day08/input.txt";
+		filename = "day08/test_input.txt";
 		break;
 	case 2:
+		filename = "day08/input.txt";
+		break;
+	case 3:
 		filename = "day08/big.boy";
 		break;
 }
@@ -71,7 +74,7 @@ function calculatePartOne(){
 function calculatePartTwo(){
 	let curPanel, outputPanel, inputPanel;
 	let partOneDigitCount = 0;
-	for(let i = 0; i < input.length / input.length; i++){
+	for(let i = 0; i < input.length; i++){
 		let topleft, top, topright, middle, bottomleft, bottom, bottomright;
 
 		curPanel = input[i].split(" | ");
@@ -130,30 +133,37 @@ function calculatePartTwo(){
 			});
 
 			if(intersectionCount === 3){
-				numArray[5] = fDigit;
+				numArray[3] = fDigit;
 			}
 			else if(fDigit !== numArray[3]){
 				numArray[2] = fDigit;
 			}
+			else{
+				numArray[5] = fDigit;
+			}
 		});
+
+		// attempt to find 9
 
 		// attempt to find the 6 segment digits
-		sixSegs.forEach(sDigit => {
-			let intersectionCount = 0;
-			allDigits.forEach(aDigits => {
-				let intersection = aDigits.filter(x => sDigit.includes(x));
-				if(intersection.length === 5){
-					intersectionCount++;
-				}
-			});
+		// sixSegs.forEach(sDigit => {
+		// 	let intersectionCount = 0;
+		// 	let differenceCount = 0;
+		// 	allDigits.forEach(aDigits => {
+		// 		let intersection = aDigits.filter(x => sDigit.includes(x));
+		// 		let difference = aDigits.filter(x => !sDigit.includes(x))
+		// 		if(intersection.length === 5){
+		// 			intersectionCount++;
+		// 		}
+		// 	});
 
-			if(intersectionCount === 3){
-				numArray[5] = sDigit;
-			}
-			else if(fDigit !== numArray[3]){
-				numArray[2] = sDigit;
-			}
-		});
+		// 	if(intersectionCount === 3){
+		// 		numArray[5] = sDigit;
+		// 	}
+		// 	else if(fDigit !== numArray[3]){
+		// 		numArray[2] = sDigit;
+		// 	}
+		// });
 
 		for (let i = 0; i < numArray.length; i++) {
 			console.log(i + ": " + numArray[i]);
