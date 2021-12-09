@@ -31,27 +31,24 @@ input = input.filter((e) => e);
 let lowPoints = new Object();
 let heightmap = new Array(input.length);
 
-//console.log(input);
+// create blank heightmap
+for (let i = 0; i < input.length; i++) {
+  heightmap[i] = Array(input[i].length).fill(0);
+}
+
+// fill heightmap
+for (let y = 0; y < input.length; y++) {
+  for (let x = 0; x < input[y].length; x++) {
+    const height = parseInt(input[y][x]);
+    heightmap[y][x] = height;
+  }
+}
 
 function numSort(a, b) {
   return +a - +b;
 }
 
 function calculatePartOne() {
-  // create blank heightmap
-  for (let i = 0; i < input.length; i++) {
-    heightmap[i] = Array(input[i].length).fill(0);
-  }
-
-  // fill heightmap
-  for (let y = 0; y < input.length; y++) {
-    for (let x = 0; x < input[y].length; x++) {
-      const height = parseInt(input[y][x]);
-      heightmap[y][x] = height;
-    }
-  }
-  //console.log(heightmap);
-
   // traverse the array looking for low points
   for (let y = 0; y < heightmap.length; y++) {
     for (let x = 0; x < heightmap[y].length; x++) {
@@ -114,22 +111,6 @@ function calculatePartOne() {
   console.log(riskLevel);
 }
 function calculatePartTwo() {
-  // create blank heightmap
-  let heightmap = new Array(input.length);
-
-  for (let i = 0; i < input.length; i++) {
-    heightmap[i] = Array(input[i].length).fill(0);
-  }
-
-  // fill heightmap
-  for (let y = 0; y < input.length; y++) {
-    for (let x = 0; x < input[y].length; x++) {
-      const height = parseInt(input[y][x]);
-      heightmap[y][x] = height;
-    }
-  }
-  //console.log(heightmap);
-
   let basinSizes = [];
 
   // traverse through the low point dictionary
