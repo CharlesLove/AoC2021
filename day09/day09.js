@@ -104,10 +104,155 @@ function calculatePartOne() {
   });
   console.log(riskLevel);
 }
+function calculatePartTwo() {
+  // create blank heightmap
+  let heightmap = new Array(input.length);
 
-function calculatePartTwo() {}
+  let visitedPoints = [];
+  for (let i = 0; i < input.length; i++) {
+    heightmap[i] = Array(input[i].length).fill(0);
+  }
+
+  // fill heightmap
+  for (let y = 0; y < input.length; y++) {
+    for (let x = 0; x < input[y].length; x++) {
+      const height = parseInt(input[y][x]);
+      heightmap[y][x] = height;
+    }
+  }
+  //console.log(heightmap);
+
+  let basinSizes = [];
+
+  // traverse the array looking for low points
+  for (let y = 0; y < 1 /*heightmap.length*/; y++) {
+    for (let x = 0; x < heightmap[y].length; x++) {
+      const height = heightmap[y][x];
+      //console.log(height);
+      let adjacentHeight = -1;
+
+      // check section
+      checks: {
+        // check above
+        if (y !== 0) {
+          adjacentHeight = heightmap[y - 1][x];
+          if (height >= adjacentHeight) {
+            //console.log(adjacentHeight + " breaks " + height);
+            break checks;
+          }
+        }
+        // check left
+        if (x !== 0) {
+          adjacentHeight = heightmap[y][x - 1];
+          if (height >= adjacentHeight) {
+            //console.log(adjacentHeight + " breaks " + height);
+            break checks;
+          }
+        }
+        // check right
+        if (x !== heightmap[y].length - 1) {
+          adjacentHeight = heightmap[y][x + 1];
+          if (height >= adjacentHeight) {
+            //console.log(adjacentHeight + " breaks " + height);
+            break checks;
+          }
+        }
+        // check down
+        if (y !== heightmap.length - 1) {
+          adjacentHeight = heightmap[y + 1][x];
+          if (height >= adjacentHeight) {
+            //console.log(adjacentHeight + " breaks " + height);
+            break checks;
+          }
+        }
+
+        // got this far?
+        // everything passed
+        // BASIN TIME!
+
+        basinSizes.push(calculateBasinSize(x, y));
+      }
+    }
+  }
+
+  function calculateBasinSize(lowX, lowY) {
+    let size = 0;
+    let pointsToVisit = [[lowX, lowY]];
+    // traverse the basin
+    while (pointsToVisit.length > 0) {
+      let currentPoint = pointsToVisit[0];
+      let x = currentPoint[0];
+      let y = currentPoint[1];
+      console.log("----Current Point: " + currentPoint);
+      pointsToVisit = pointsToVisit.slice(1);
+      //console.log(pointsToVisit);
+
+      let adjacentPoint = [-1, -1];
+      let heightAdjPoint = 9;
+
+      // if in already visited points or 9
+      // don't add it to points to visit
+
+      // check above
+      if (y !== 0) {
+        adjacentPoint = [x, y - 1];
+        heightAdjPoint = heightmap[y - 1][x];
+        if (
+          heightAdjPoint !== 9 &&
+          adjacentPoint[1] !== 0 &&
+          visitedPoints.indexOf(adjacentPoint) === -1
+        ) {
+          //pointsToVisit.push(adjacentPoint);
+          console.log("(from above)Added " + adjacentPoint);
+        }
+      }
+      // check left
+      if (x !== 0) {
+        adjacentPoint = [x - 1, y];
+        heightAdjPoint = heightmap[y][x - 1];
+        if (
+          heightAdjPoint !== 9 &&
+          visitedPoints.indexOf(adjacentPoint) === -1
+        ) {
+          //pointsToVisit.push(adjacentPoint);
+          console.log("(from left)Added " + adjacentPoint);
+        }
+      }
+      // check right
+      if (x !== heightmap[y].length - 1) {
+        adjacentPoint = [x + 1, y];
+        heightAdjPoint = heightmap[y][x + 1];
+        if (
+          heightAdjPoint !== 9 &&
+          visitedPoints.indexOf(adjacentPoint) === -1
+        ) {
+          //pointsToVisit.push(adjacentPoint);
+          console.log("(from right)Added " + adjacentPoint);
+        }
+      }
+      // check down
+      if (y !== heightmap.length - 1) {
+        adjacentPoint = [x, y + 1];
+        heightAdjPoint = heightmap[y + 1][x];
+        if (
+          heightAdjPoint !== 9 &&
+          visitedPoints.indexOf(adjacentPoint) === -1
+        ) {
+          //pointsToVisit.push(adjacentPoint);
+          console.log("(from down)Added " + adjacentPoint);
+        }
+      }
+
+      // at the end mark point as visited
+      visitedPoints.push(currentPoint);
+    }
+    //console.log(visitedPoints);
+    return visitedPoints.length;
+  }
+  console.log(basinSizes);
+}
 
 console.log("---Part 1---");
-calculatePartOne();
-//console.log("---Part 2---");
-//calculatePartTwo();
+//calculatePartOne();
+console.log("---Part 2---");
+calculatePartTwo();
