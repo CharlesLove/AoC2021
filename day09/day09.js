@@ -124,7 +124,7 @@ function calculatePartTwo() {
   let basinSizes = [];
 
   // traverse the array looking for low points
-  for (let y = 0; y < 1 /*heightmap.length*/; y++) {
+  for (let y = 0; y < heightmap.length; y++) {
     for (let x = 0; x < heightmap[y].length; x++) {
       const height = heightmap[y][x];
       //console.log(height);
@@ -198,12 +198,12 @@ function calculatePartTwo() {
 
       // check above
       if (y !== 0) {
-        adjX = y;
+        adjX = x;
         adjY = y - 1;
         adjacentPoint = [adjX, adjY];
         heightAdjPoint = heightmap[adjY][adjX];
-        if (heightAdjPoint !== 9 && adjacentPoint in visitedPoints) {
-          //pointsToVisit.push(adjacentPoint);
+        if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
+          pointsToVisit.push(adjacentPoint);
           console.log("(from above)Added " + adjacentPoint);
         }
       }
