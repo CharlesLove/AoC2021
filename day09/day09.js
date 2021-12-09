@@ -30,6 +30,10 @@ input = input.filter((e) => e);
 
 //console.log(input);
 
+function numSort(a, b) {
+  return +a - +b;
+}
+
 function calculatePartOne() {
   // create blank heightmap
   let heightmap = new Array(input.length);
@@ -172,6 +176,7 @@ function calculatePartTwo() {
         basinSizes.push(calculateBasinSize(x, y));
       }
     }
+    console.log(y + " completed");
   }
 
   function calculateBasinSize(lowX, lowY) {
@@ -183,7 +188,7 @@ function calculatePartTwo() {
       let currentPoint = pointsToVisit[0];
       let x = currentPoint[0];
       let y = currentPoint[1];
-      console.log("----Current Point: " + currentPoint);
+      //console.log("----Current Point: " + currentPoint);
       pointsToVisit = pointsToVisit.slice(1);
 
       //console.log(pointsToVisit);
@@ -204,7 +209,7 @@ function calculatePartTwo() {
         heightAdjPoint = heightmap[adjY][adjX];
         if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
           pointsToVisit.push(adjacentPoint);
-          console.log("(from above)Added " + adjacentPoint);
+          //console.log("(from above)Added " + adjacentPoint);
         }
       }
       // check left
@@ -213,17 +218,17 @@ function calculatePartTwo() {
         heightAdjPoint = heightmap[y][x - 1];
         if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
           pointsToVisit.push(adjacentPoint);
-          console.log("(from left)Added " + adjacentPoint);
+          //console.log("(from left)Added " + adjacentPoint);
         }
       }
       // check right
       if (x !== heightmap[y].length - 1) {
         adjacentPoint = [x + 1, y];
         heightAdjPoint = heightmap[y][x + 1];
-        console.log(adjacentPoint);
+        //console.log(adjacentPoint);
         if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
           pointsToVisit.push(adjacentPoint);
-          console.log("(from right)Added " + adjacentPoint);
+          //console.log("(from right)Added " + adjacentPoint);
         }
       }
       // check down
@@ -232,7 +237,7 @@ function calculatePartTwo() {
         heightAdjPoint = heightmap[y + 1][x];
         if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
           pointsToVisit.push(adjacentPoint);
-          console.log("(from down)Added " + adjacentPoint);
+          //console.log("(from down)Added " + adjacentPoint);
         }
       }
 
@@ -240,15 +245,23 @@ function calculatePartTwo() {
       visitedPoints[currentPoint] = heightmap[y][x];
       //visitedPoints.push(currentPoint);
 
-      console.log(visitedPoints);
+      //console.log(visitedPoints);
     }
     //console.log(visitedPoints);
     return Object.keys(visitedPoints).length;
   }
-  console.log(basinSizes);
+  basinSizes = basinSizes.sort(numSort);
+  //console.log(basinSizes);
+
+  let sizeThreeLargest = 1;
+  for (let i = basinSizes.length - 3; i < basinSizes.length; i++) {
+    const basinSize = basinSizes[i];
+    sizeThreeLargest *= basinSize;
+  }
+  console.log(sizeThreeLargest);
 }
 
 console.log("---Part 1---");
-//calculatePartOne();
+calculatePartOne();
 console.log("---Part 2---");
 calculatePartTwo();
