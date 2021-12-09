@@ -201,16 +201,18 @@ function calculatePartTwo() {
 
   function calculateBasinSize(lowX, lowY) {
     let size = 0;
-    let pointsToVisit = [[lowX, lowY]];
+
+    let pointsToVisit = [[lowX, lowY].toString()];
+
     //console.log(pointsToVisit);
     let visitedPoints = new Object();
     // traverse the basin
     while (pointsToVisit.length > 0) {
-      let currentPoint = pointsToVisit[0];
+      let currentPoint = pointsToVisit[0].split(",");
 
       //console.log(lowX + ", " + lowY + ": " + currentPoint);
-      let x = currentPoint[0];
-      let y = currentPoint[1];
+      let x = parseInt(currentPoint[0]);
+      let y = parseInt(currentPoint[1]);
       //console.log("----Current Point: " + currentPoint);
       pointsToVisit = pointsToVisit.slice(1);
 
@@ -218,7 +220,7 @@ function calculatePartTwo() {
 
       let adjX = -1,
         adjY = -1;
-      let adjacentPoint = [adjX, adjY];
+      let adjacentPoint = [adjX, adjY].toString();
       let heightAdjPoint = 9;
 
       // if in already visited points or 9
@@ -228,9 +230,13 @@ function calculatePartTwo() {
       if (y !== 0) {
         adjX = x;
         adjY = y - 1;
-        adjacentPoint = [adjX, adjY];
+        adjacentPoint = [adjX, adjY].toString();
         heightAdjPoint = heightmap[adjY][adjX];
-        if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
+        if (
+          heightAdjPoint !== 9 &&
+          !(adjacentPoint in visitedPoints) &&
+          pointsToVisit.indexOf(adjacentPoint) === -1
+        ) {
           pointsToVisit.push(adjacentPoint);
           visitedPoints[currentPoint] = undefined; //heightmap[adjY][adjX];
           //console.log("(from above)Added " + adjacentPoint);
@@ -240,9 +246,13 @@ function calculatePartTwo() {
       if (x !== 0) {
         adjX = x - 1;
         adjY = y;
-        adjacentPoint = [adjX, adjY];
+        adjacentPoint = [adjX, adjY].toString();
         heightAdjPoint = heightmap[y][x - 1];
-        if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
+        if (
+          heightAdjPoint !== 9 &&
+          !(adjacentPoint in visitedPoints) &&
+          pointsToVisit.indexOf(adjacentPoint) === -1
+        ) {
           pointsToVisit.push(adjacentPoint);
           visitedPoints[currentPoint] = undefined; // heightmap[adjY][adjX];
           //console.log("(from left)Added " + adjacentPoint);
@@ -252,10 +262,14 @@ function calculatePartTwo() {
       if (x !== heightmap[y].length - 1) {
         adjX = x + 1;
         adjY = y;
-        adjacentPoint = [adjX, adjY];
+        adjacentPoint = [adjX, adjY].toString();
         heightAdjPoint = heightmap[adjY][adjX];
         //console.log(adjacentPoint);
-        if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
+        if (
+          heightAdjPoint !== 9 &&
+          !(adjacentPoint in visitedPoints) &&
+          pointsToVisit.indexOf(adjacentPoint) === -1
+        ) {
           pointsToVisit.push(adjacentPoint);
           visitedPoints[currentPoint] = undefined; //heightmap[adjY][adjX];
           //console.log("(from right)Added " + adjacentPoint);
@@ -265,9 +279,13 @@ function calculatePartTwo() {
       if (y !== heightmap.length - 1) {
         adjX = x;
         adjY = y + 1;
-        adjacentPoint = [adjX, adjY];
+        adjacentPoint = [adjX, adjY].toString();
         heightAdjPoint = heightmap[adjY][adjX];
-        if (heightAdjPoint !== 9 && !(adjacentPoint in visitedPoints)) {
+        if (
+          heightAdjPoint !== 9 &&
+          !(adjacentPoint in visitedPoints) &&
+          pointsToVisit.indexOf(adjacentPoint) === -1
+        ) {
           pointsToVisit.push(adjacentPoint);
           visitedPoints[currentPoint] = undefined; //heightmap[adjY][adjX];
           //console.log("(from down)Added " + adjacentPoint);
@@ -275,7 +293,7 @@ function calculatePartTwo() {
       }
 
       // at the current point and height to dictionary
-      visitedPoints[currentPoint] = heightmap[y][x];
+      visitedPoints[currentPoint] = undefined; //heightmap[y][x];
       //visitedPoints.push(currentPoint);
 
       //console.log(visitedPoints);
