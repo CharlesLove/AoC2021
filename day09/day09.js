@@ -108,7 +108,7 @@ function calculatePartTwo() {
   // create blank heightmap
   let heightmap = new Array(input.length);
 
-  let visitedPoints = [];
+  
   for (let i = 0; i < input.length; i++) {
     heightmap[i] = Array(input[i].length).fill(0);
   }
@@ -178,6 +178,7 @@ function calculatePartTwo() {
   function calculateBasinSize(lowX, lowY) {
     let size = 0;
     let pointsToVisit = [[lowX, lowY]];
+		let visitedPoints = [];
     // traverse the basin
     while (pointsToVisit.length > 0) {
       let currentPoint = pointsToVisit[0];
