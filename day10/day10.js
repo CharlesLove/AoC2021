@@ -17,9 +17,10 @@ switch (filePicker) {
   case 1:
     filename = "day10/input.txt";
     break;
-  case 2:
-    filename = "day10/big.boy";
-    break;
+	// No big boy for today
+  // case 2:
+  //   filename = "day10/big.boy";
+  //   break;
 }
 
 console.log("---- Running: " + filename + " ----");
