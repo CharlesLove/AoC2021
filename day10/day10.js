@@ -17,10 +17,7 @@ switch (filePicker) {
   case 1:
     filename = "day10/input.txt";
     break;
-	// No big boy for today
-  // case 2:
-  //   filename = "day10/big.boy";
-  //   break;
+  // No big boy for today
 }
 
 console.log("---- Running: " + filename + " ----");
@@ -29,9 +26,6 @@ let input = fs.readFileSync(filename).toString("utf-8");
 input = input.split("\n");
 input = input.filter((e) => e);
 
-//console.log("---Part 1---");
-//calculatePartOne();
-//console.log("---Part 2---");
 calculatePartOneAndTwo();
 
 function numSort(a, b) {
@@ -39,7 +33,6 @@ function numSort(a, b) {
 }
 
 function calculatePartOneAndTwo() {
-  //console.log(input);
   let total1 = 0;
   let total2 = 0;
   let closingPointsArray = [];
@@ -47,10 +40,8 @@ function calculatePartOneAndTwo() {
     const line = input[i].split("");
     let openArray = [],
       closeArray = [];
-    let lastOpen = "";
     let closingPoints = 0;
-    //console.log(line);
-    charLoop: for (let c = 0; c < line.length; c++) {
+    for (let c = 0; c < line.length; c++) {
       const character = line[c];
       let isIncorrect = false;
       let incPointValue = 0;
@@ -58,22 +49,18 @@ function calculatePartOneAndTwo() {
         case ")":
           incPointValue = 3;
           isIncorrect = checkOpen("(", character);
-          //closeArray.push(character);
           break;
         case "]":
           incPointValue = 57;
           isIncorrect = checkOpen("[", character);
-          //closeArray.push(character);
           break;
         case "}":
           incPointValue = 1197;
           isIncorrect = checkOpen("{", character);
-          //closeArray.push(character);
           break;
         case ">":
           incPointValue = 25137;
           isIncorrect = checkOpen("<", character);
-          //closeArray.push(character);
           break;
 
         default:
@@ -101,8 +88,6 @@ function calculatePartOneAndTwo() {
         continue lineLoop;
       }
     }
-    //console.log(openArray);
-    //console.log(closeArray);
 
     // calculate value of close array
     for (let i = 0; i < closeArray.length; i++) {
@@ -124,7 +109,6 @@ function calculatePartOneAndTwo() {
       }
 
       closingPoints = closingPoints * 5 + basePoints;
-      //console.log(closingPoints);
     }
 
     closingPointsArray.push(closingPoints);
@@ -136,15 +120,12 @@ function calculatePartOneAndTwo() {
         closeArray.shift();
         return false;
       } else {
-        //console.log("Invalid character: " + inChar);
         return true;
       }
     }
   }
 
-	//console.log(closingPointsArray);
   closingPointsArray = closingPointsArray.sort(numSort);
-	//console.log(closingPointsArray);
   total2 = closingPointsArray[Math.floor(closingPointsArray.length / 2)];
 
   console.log("---Part 1---");
