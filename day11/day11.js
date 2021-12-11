@@ -199,7 +199,7 @@ function calculatePartOne() {
 
   let totalFlashes = 0;
 
-  for (let step = 1; step <= 10; step++) {
+  for (let step = 1; step <= 100; step++) {
     let octopiToFlash = new Array();
     // 1. increment everything by 1
     for (let y = 0; y < octopiMatrix.length; y++) {
