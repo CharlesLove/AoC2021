@@ -85,79 +85,111 @@ function calculatePartOne() {
   //   }
   // }
 
-  let flashQueue = [];
+  let totalFlashes = 0;
 
-  Object.keys(octopiDict).forEach((octopi) => {
-    //console.log(octopi);
-    octopiDict[octopi] += 1;
-    console.log(octopi + " " + octopiDict[octopi]);
-    if (octopiDict[octopi] > 9) {
-      flashQueue.push(octopi);
-    }
-  });
+  for (let step = 0; step < 2; step++) {
+    let flashQueue = [];
 
-  console.log(flashQueue);
+    Object.keys(octopiDict).forEach((octopi) => {
+      //console.log(octopi);
+      octopiDict[octopi] += 1;
+      //console.log(octopi + " " + octopiDict[octopi]);
+      if (octopiDict[octopi] > 9) {
+        //totalFlashes++;
+        flashQueue.push(octopi);
+      }
+      while (flashQueue.length > 0) {
+        //totalFlashes++;
+        let currentPosition = flashQueue[0].split(",").map(Number);
+        let curX = currentPosition[0],
+          curY = currentPosition[1];
 
-  // queue to be flashed
-  while (flashQueue.length > 0) {
-    let currentPosition = flashQueue[0].split(",").map(Number);
-    let curX = currentPosition[0],
-      curY = currentPosition[1];
+        let tl = `${curX - 1},${curY - 1}`,
+          t = `${curX},${curY - 1}`,
+          tr = `${curX + 1},${curY - 1}`,
+          l = `${curX - 1},${curY}`,
+          r = `${curX + 1},${curY}`,
+          bl = `${curX - 1},${curY + 1}`,
+          b = `${curX},${curY + 1}`,
+          br = `${curX + 1},${curY + 1}`;
+        // set current octopi to -Infinity
+        octopiDict[flashQueue[0]] = -Infinity;
+        //totalFlashes++;
+        console.log(
+          `Current Position: ${curX},${curY} Energy Level: ${
+            octopiDict[flashQueue[0]]
+          }`
+        );
 
-    let tl = `${curX - 1},${curY - 1}`,
-      t = `${curX},${curY - 1}`,
-      tr = `${curX + 1},${curY - 1}`,
-      l = `${curX - 1},${curY}`,
-      r = `${curX + 1},${curY}`,
-      bl = `${curX - 1},${curY + 1}`,
-      b = `${curX},${curY + 1}`,
-      br = `${curX + 1},${curY + 1}`;
-    // set current octopi to -Infinity
-    octopiDict[flashQueue[0]] = -Infinity;
-    console.log(
-      `Current Position: ${curX},${curY} Energy Level: ${
-        octopiDict[flashQueue[0]]
-      }`
-    );
+        // add 1 to the 8 possible surrounding octopi
+        // update dictionary as well
+        // top left
+        incrementOctopi(tl);
+        // top
+        incrementOctopi(t);
+        // top right
+        incrementOctopi(tr);
+        // left
+        incrementOctopi(l);
+        // right
+        incrementOctopi(r);
+        // bottom left
+        incrementOctopi(bl);
+        // bottom
+        incrementOctopi(b);
+        // bottom right
+        incrementOctopi(br);
 
-    // add 1 to the 8 possible surrounding octopi
-    // update dictionary as well
-    // top left
-    incrementOctopi(tl);
-    // top
-    incrementOctopi(t);
-    // top right
-    incrementOctopi(tr);
-    // left
-    incrementOctopi(l);
-    // right
-    incrementOctopi(r);
-    // bottom left
-    incrementOctopi(bl);
-    // bottom
-    incrementOctopi(b);
-    // bottom right
-    incrementOctopi(br);
+        // dequeue octopus
+        flashQueue.shift();
 
-    // dequeue octopus
-    flashQueue.shift();
-
-    function incrementOctopi(position) {
-      let octopi = octopiDict[position];
-      console.log(`Incrementing ${position}  ${octopi}`);
-      if (octopiDict[position] != undefined) {
-        octopiDict[position] += 1;
-        if (octopiDict[position] > 9) {
-          octopiDict[position] = -Infinity;
-          //flashQueue.push(position);
-          // flashed
-          console.log("flashed");
+        function incrementOctopi(position) {
+          let octopi = octopiDict[position];
+          //console.log(`Incrementing ${position}  ${octopi}`);
+          if (octopiDict[position] !== undefined) {
+            octopiDict[position] += 1;
+            if (octopiDict[position] > 9) {
+              //totalFlashes++;
+              //octopiDict[position] = -Infinity;
+              //flashQueue.push(position);
+              // flashed
+              console.log("flashed");
+            }
+          }
         }
       }
-    }
+    });
+
+    //console.log(flashQueue);
+
+    // queue to be flashed
+
+    //console.log(flashQueue);
+
+    console.log(`After Step: ${step + 1}`);
+
+    // count -Infinity
+    Object.keys(octopiDict).forEach((octopi) => {
+      if (octopiDict[octopi] === -Infinity) {
+        totalFlashes++;
+        octopiDict[octopi] = 0;
+      }
+    });
+    console.log(octopiDict);
+    let yes = "no";
   }
-  console.log(flashQueue);
 
   console.log(octopiDict);
+
+  // print nicer dictionary
+  for (let y = 0; y < input.length; y++) {
+    let octopiLine = "";
+    for (let x = 0; x < input[y].length; x++) {
+      let octopi = octopiDict[[x, y].toString()];
+      octopiLine += octopi;
+    }
+    console.log(octopiLine);
+  }
+  console.log(`Total flashes: ${totalFlashes}`);
 }
 function calculatePartTwo() {}
