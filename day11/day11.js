@@ -224,11 +224,11 @@ function calculatePartOne() {
         bl = [octPositionX - 1, octPositionY + 1],
         b = [octPositionX, octPositionY + 1],
         br = [octPositionX + 1, octPositionY + 1];
-      console.log(octPosition);
+      //console.log(octPosition);
       //console.log(octPosition);
 
       let octEnergy = octopiMatrix[octPositionY][octPositionX];
-      console.log(`${octEnergy}`);
+      //console.log(`${octEnergy}`);
       // add 1 to the 8 possible surrounding octopi
       // top left
       incrementOctopi(tl);
@@ -257,6 +257,7 @@ function calculatePartOne() {
         let octopiEnergy = octopiMatrix[y][x];
         if (octopiEnergy > 9) {
           octopiEnergy = 0;
+          totalFlashes++;
         }
         octopiMatrix[y][x] = octopiEnergy;
       }
@@ -269,8 +270,8 @@ function calculatePartOne() {
     function incrementOctopi(position) {
       let x = parseInt(position[0]),
         y = parseInt(position[1]);
-      console.log(x);
-      console.log(y);
+      //console.log(x);
+      //console.log(y);
       if (
         x >= 0 &&
         y >= 0 &&
@@ -293,6 +294,7 @@ function calculatePartOne() {
       }
     }
   }
+  console.log(totalFlashes);
 }
 
 function calculatePartTwo() {}
