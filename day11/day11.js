@@ -5,6 +5,7 @@
 // .txt in memory
 
 let fs = require("fs");
+const { exit } = require("process");
 var myArgs = process.argv.slice(2);
 let filename = "";
 
@@ -59,148 +60,16 @@ function numSort(a, b) {
   return +a - +b;
 }
 
-// function calculatePartOne() {
-//   //First, the energy level of each octopus increases by 1.
-//   //Then, any octopus with an energy level greater than 9 flashes.
-//   //This increases the energy level of all adjacent octopuses by 1,
-//   //including octopuses that are diagonally adjacent. If this causes
-//   //an octopus to have an energy level greater than 9, it also flashes.
-//   //This process continues as long as new octopuses keep having their
-//   //energy level increased beyond 9. (An octopus can only flash at most once per step.)
-//   //Finally, any octopus that flashed during this step has its energy level set to 0,
-//   //as it used all of its energy to flash.
-
-//   // for (let step = 0; step < 1; step++) {
-//   //   for (let y = 0; y < octopiMatrix.length; y++) {
-//   //     for (let x = 0; x < octopiMatrix[y].length; x++) {
-//   //       let energyLevel = octopiMatrix[y][x] + 1;
-//   //       //console.log(`Octopi ${x},${y}: ${energyLevel}`);
-//   //       if (energyLevel > 9) {
-//   //         //flash
-//   //         energyLevel = -Infinity;
-//   //         // add 1 to adjacent
-//   //       }
-//   //       console.log(`Octopi ${x},${y}: ${energyLevel}`);
-//   //     }
-//   //   }
-//   // }
-
-//   let totalFlashes = 0;
-
-//   for (let step = 0; step < 2; step++) {
-//     let flashQueue = [];
-
-//     Object.keys(octopiDict).forEach((octopi) => {
-//       //console.log(octopi);
-//       octopiDict[octopi] += 1;
-//       //console.log(octopi + " " + octopiDict[octopi]);
-//       if (octopiDict[octopi] > 9) {
-//         //totalFlashes++;
-//         flashQueue.push(octopi);
-//       }
-//       while (flashQueue.length > 0) {
-//         //totalFlashes++;
-//         let currentPosition = flashQueue[0].split(",").map(Number);
-//         let curX = currentPosition[0],
-//           curY = currentPosition[1];
-
-//         let tl = `${curX - 1},${curY - 1}`,
-//           t = `${curX},${curY - 1}`,
-//           tr = `${curX + 1},${curY - 1}`,
-//           l = `${curX - 1},${curY}`,
-//           r = `${curX + 1},${curY}`,
-//           bl = `${curX - 1},${curY + 1}`,
-//           b = `${curX},${curY + 1}`,
-//           br = `${curX + 1},${curY + 1}`;
-//         // set current octopi to -Infinity
-//         octopiDict[flashQueue[0]] = -Infinity;
-//         //totalFlashes++;
-//         console.log(
-//           `Current Position: ${curX},${curY} Energy Level: ${
-//             octopiDict[flashQueue[0]]
-//           }`
-//         );
-
-//         // add 1 to the 8 possible surrounding octopi
-//         // update dictionary as well
-//         // top left
-//         incrementOctopi(tl);
-//         // top
-//         incrementOctopi(t);
-//         // top right
-//         incrementOctopi(tr);
-//         // left
-//         incrementOctopi(l);
-//         // right
-//         incrementOctopi(r);
-//         // bottom left
-//         incrementOctopi(bl);
-//         // bottom
-//         incrementOctopi(b);
-//         // bottom right
-//         incrementOctopi(br);
-
-//         // dequeue octopus
-//         flashQueue.shift();
-
-//         function incrementOctopi(position) {
-//           let octopi = octopiDict[position];
-//           //console.log(`Incrementing ${position}  ${octopi}`);
-//           if (octopiDict[position] !== undefined) {
-//             octopiDict[position] += 1;
-//             if (octopiDict[position] > 9) {
-//               //totalFlashes++;
-//               //octopiDict[position] = -Infinity;
-//               //flashQueue.push(position);
-//               // flashed
-//               console.log("flashed");
-//             }
-//           }
-//         }
-//       }
-//     });
-
-//     //console.log(flashQueue);
-
-//     // queue to be flashed
-
-//     //console.log(flashQueue);
-
-//     console.log(`After Step: ${step + 1}`);
-
-//     // count -Infinity
-//     Object.keys(octopiDict).forEach((octopi) => {
-//       if (octopiDict[octopi] === -Infinity) {
-//         totalFlashes++;
-//         octopiDict[octopi] = 0;
-//       }
-//     });
-//     console.log(octopiDict);
-//     let yes = "no";
-//   }
-
-//   console.log(octopiDict);
-
-//   // print nicer dictionary
-//   for (let y = 0; y < input.length; y++) {
-//     let octopiLine = "";
-//     for (let x = 0; x < input[y].length; x++) {
-//       let octopi = octopiDict[[x, y].toString()];
-//       octopiLine += octopi;
-//     }
-//     console.log(octopiLine);
-//   }
-//   console.log(`Total flashes: ${totalFlashes}`);
-// }
-
 function calculatePartOne() {
-  console.log("Before any steps:");
-  console.log(octopiMatrix);
+  //console.log("Before any steps:");
+  //console.log(octopiMatrix);
 
   let totalFlashes = 0;
+  let firstFlashSync = -1;
 
-  for (let step = 1; step <= 100; step++) {
+  for (let step = 1; step <= Infinity; step++) {
     let octopiToFlash = new Array();
+    let flashesThisStep = 0;
     // 1. increment everything by 1
     for (let y = 0; y < octopiMatrix.length; y++) {
       for (let x = 0; x < octopiMatrix[y].length; x++) {
@@ -208,8 +77,8 @@ function calculatePartOne() {
         incrementOctopi(position);
       }
     }
-    console.log(`\nAfter incrementing step: ${step}`);
-    console.log(octopiMatrix);
+    //console.log(`\nAfter incrementing step: ${step}`);
+    //console.log(octopiMatrix);
 
     // 2. Flash the correct octopi
     for (let i = 0; i < octopiToFlash.length; i++) {
@@ -248,8 +117,8 @@ function calculatePartOne() {
       incrementOctopi(br);
     }
 
-    console.log(`\nAfter flashing step: ${step}`);
-    console.log(octopiMatrix);
+    //console.log(`\nAfter flashing step: ${step}`);
+    //console.log(octopiMatrix);
 
     // 3. Set octopi above 9 back to 0
     for (let y = 0; y < octopiMatrix.length; y++) {
@@ -258,14 +127,26 @@ function calculatePartOne() {
         if (octopiEnergy > 9) {
           octopiEnergy = 0;
           totalFlashes++;
+          flashesThisStep++;
+          //console.log(flashesThisStep);
+          if (flashesThisStep === 100 && firstFlashSync === -1) {
+            firstFlashSync = step;
+            console.log(firstFlashSync);
+            exit();
+          }
         }
         octopiMatrix[y][x] = octopiEnergy;
       }
     }
 
     // at the end
-    console.log(`\nAfter step: ${step}`);
-    console.log(octopiMatrix);
+    //console.log(`\nAfter step: ${step}`);
+    //console.log(octopiMatrix);
+
+    if (step === 100) {
+      console.log(totalFlashes);
+      console.log("---Part 2---");
+    }
 
     function incrementOctopi(position) {
       let x = parseInt(position[0]),
@@ -294,7 +175,8 @@ function calculatePartOne() {
       }
     }
   }
-  console.log(totalFlashes);
+  //console.log(totalFlashes);
+  //console.log(firstFlashSync);
 }
 
 function calculatePartTwo() {}
