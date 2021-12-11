@@ -197,9 +197,10 @@ function calculatePartOne() {
   console.log("Before any steps:");
   console.log(octopiMatrix);
 
-	
-  for (let step = 1; step <= 2; step++) {
-		let octopiToFlash = new Array();
+  let totalFlashes = 0;
+
+  for (let step = 1; step <= 10; step++) {
+    let octopiToFlash = new Array();
     // 1. increment everything by 1
     for (let y = 0; y < octopiMatrix.length; y++) {
       for (let x = 0; x < octopiMatrix[y].length; x++) {
@@ -266,25 +267,28 @@ function calculatePartOne() {
     console.log(octopiMatrix);
 
     function incrementOctopi(position) {
-      let x = position[0],
-        y = position[1];
-      let octopiEnergy = octopiMatrix[y][x];
-      console.log(`${x},${y}: ${octopiEnergy}`);
+      let x = parseInt(position[0]),
+        y = parseInt(position[1]);
+      console.log(x);
+      console.log(y);
       if (
         x >= 0 &&
         y >= 0 &&
-        x <= octopiMatrix[0].length &&
-        y <= octopiMatrix.length &&
-        octopiEnergy < 10
+        x < octopiMatrix[0].length &&
+        y < octopiMatrix.length
       ) {
-        octopiEnergy += 1;
-        octopiMatrix[y][x] = octopiEnergy;
-        // add to flash array
-        if (
-          octopiEnergy > 9 &&
-          octopiToFlash.indexOf([x, y].toString()) === -1
-        ) {
-          octopiToFlash.push([x, y]);
+        let octopiEnergy = octopiMatrix[y][x];
+        if (octopiEnergy <= 10) {
+          octopiEnergy += 1;
+          octopiMatrix[y][x] = octopiEnergy;
+          // add to flash array
+          if (
+            octopiEnergy > 9 &&
+            octopiEnergy <= 10 &&
+            octopiToFlash.indexOf([x, y].toString()) === -1
+          ) {
+            octopiToFlash.push([x, y]);
+          }
         }
       }
     }
