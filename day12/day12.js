@@ -39,7 +39,7 @@ let input = fs.readFileSync(filename).toString("utf-8");
 input = input.split("\n");
 input = input.filter((e) => e);
 
-console.log(input);
+//console.log(input);
 
 console.log("---Part 1---");
 calculatePartOne();
@@ -54,7 +54,6 @@ function calculatePartOne() {
   let pathsArray = [];
   let completedPaths = [];
   let nodeDict = new Object();
-  let endCount = 0;
 
   // Populate the node dictionary
   for (let i = 0; i < input.length; i++) {
@@ -78,7 +77,7 @@ function calculatePartOne() {
       }
     }
   }
-  console.log(nodeDict);
+  //console.log(nodeDict);
 
   // add start to arrays
   {
@@ -88,7 +87,7 @@ function calculatePartOne() {
     });
   }
 
-  console.log(pathsArray);
+  //console.log(pathsArray);
 
   let curLevel = 1;
 
@@ -129,11 +128,11 @@ function calculatePartOne() {
     curLevel++;
   }
 
-  console.log("Final working path array:");
-  console.log(pathsArray);
+  // console.log("Final working path array:");
+  // console.log(pathsArray);
 
-  console.log("Completed paths:");
-  console.log(completedPaths);
+  // console.log("Completed paths:");
+  // console.log(completedPaths);
 
   console.log(completedPaths.length);
 }
