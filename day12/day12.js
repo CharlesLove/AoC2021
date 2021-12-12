@@ -46,21 +46,14 @@ calculatePartOne();
 // console.log("---Part 2---");
 // calculatePartTwo();
 
-// class Node {
-//   constructor(value, parents, children) {
-//     this.value = value;
-//     this.parents = parents;
-//     this.children = children;
-//   }
-// }
 function numSort(a, b) {
   return +a - +b;
 }
 
 function calculatePartOne() {
+  let pathsArray = [];
   let nodeDict = new Object();
-  let nodeVisitCount = new Object();
-  let pathArray = new Array();
+  let endCount = 0;
 
   // Populate the node dictionary
   for (let i = 0; i < input.length; i++) {
@@ -71,7 +64,6 @@ function calculatePartOne() {
     if (nodeDict[nodeStart] === undefined) {
       nodeDict[nodeStart] = [nodeEnd];
     } else {
-      //nodeDict[nodeStart] = nodeEnd;
       nodeDict[nodeStart].push(nodeEnd);
     }
     // do make sure the children have dictionary items too
@@ -84,46 +76,61 @@ function calculatePartOne() {
         nodeDict[nodeEnd].push(nodeStart);
       }
     }
-    nodeVisitCount[nodeStart] = 0;
-    nodeVisitCount[nodeEnd] = 0;
+  }
+  console.log(nodeDict);
+
+  // add start to arrays
+  {
+    let starts = nodeDict["start"];
+    starts.forEach((next) => {
+      pathsArray.push(["start", next]);
+    });
   }
 
-  // Visit all paths and add to path array
-  visitNode("start");
+  console.log(pathsArray);
 
-  console.log(nodeDict);
-  console.log(nodeVisitCount);
+  let curLevel = 1;
 
-  function visitNode(inputNode) {
-    console.log(`Visiting: ${inputNode}`);
-    let curChildren = nodeDict[inputNode];
-    nodeVisitCount[inputNode] += 1;
+  while (pathsArray.length != endCount) {
+    for (let i = 0; i < pathsArray.length; i++) {
+      let curPath = pathsArray[i];
 
-    //console.log(curChildren);
-    if (curChildren !== undefined) {
-      curChildren.forEach((child) => {
-        // check if child has already been visited
-        let visitCount = nodeVisitCount[child];
-        let isLowerCase =
-          child[0] === child[0].toLowerCase() &&
-          child !== "start" &&
-          child !== "end";
-        console.log(visitCount);
-        if (isLowerCase && visitCount >= 1) {
-          // don't visit
+      let curNode = pathsArray[i][curLevel];
+
+      // find children
+      let curNodeChildren = nodeDict[curNode];
+      //console.log(curNodeChildren);
+
+      let finalizedPath = [];
+
+      curNodeChildren.forEach((child) => {
+        // check if lowercase
+        let isLowercase = child.toLowerCase() === child;
+        // check if child is already in path and lowercase
+        if (isLowercase && curPath.indexOf(child) !== -1) {
+          //continue;
         } else {
-          if (child !== "end") {
-            visitNode(child);
-          } else {
-            console.log("end");
-            pathArray.push("something");
-            return;
-          }
+          let pathToChild = curPath.concat(child);
+          // console.log(pathToChild);
+          // console.log(`Path to ${child}: ${pathToChild}`);
+          finalizedPath.push(pathToChild);
         }
       });
+
+      //console.log("Finalized path:");
+      //console.log(finalizedPath);
+
+      curPath = finalizedPath;
+      pathsArray[i] = curPath;
     }
+    break;
+    curLevel++;
   }
 
-  console.log(pathArray.length);
+  console.log("Final path array:");
+  console.log(pathsArray);
+
+  // start can go to A and b
+  //
 }
 function calculatePartTwo() {}
