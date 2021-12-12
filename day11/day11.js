@@ -45,15 +45,13 @@ input.forEach((line) => {
 });
 
 console.log("---Part 1---");
-calculatePartOne();
-console.log("---Part 2---");
-calculatePartTwo();
+calculatePartOneAndTwo();
 
 function numSort(a, b) {
   return +a - +b;
 }
 
-function calculatePartOne() {
+function calculatePartOneAndTwo() {
   let totalFlashes = 0;
   let firstFlashSync = -1;
 
@@ -111,7 +109,9 @@ function calculatePartOne() {
           flashesThisStep++;
           //console.log(flashesThisStep);
           if (flashesThisStep === octopiCount && firstFlashSync === -1) {
-            console.log("---Part 2---");
+            if (step < 100) {
+              console.log("---Part 2---");
+            }
             firstFlashSync = step;
             console.log(firstFlashSync);
             exit();
@@ -124,6 +124,7 @@ function calculatePartOne() {
     // Part 1 solution
     if (step === 100) {
       console.log(totalFlashes);
+      console.log("---Part 2---");
     }
 
     function incrementOctopi(position) {
