@@ -24,6 +24,9 @@ switch (filePicker) {
   case 3:
     filename = "day11/big.boy";
     break;
+  case 4:
+    filename = "day11/bigger.boy";
+    break;
 }
 
 console.log("---- Running: " + filename + " ----");
@@ -33,10 +36,12 @@ input = input.split("\n");
 input = input.filter((e) => e);
 
 let octopiMatrix = new Array();
+let octopiCount = 0;
 
 input.forEach((line) => {
   let lineArray = line.split("").map(Number);
   octopiMatrix.push(lineArray);
+  octopiCount += lineArray.length;
 });
 
 console.log("---Part 1---");
@@ -105,7 +110,8 @@ function calculatePartOne() {
           totalFlashes++;
           flashesThisStep++;
           //console.log(flashesThisStep);
-          if (flashesThisStep === 100 && firstFlashSync === -1) {
+          if (flashesThisStep === octopiCount && firstFlashSync === -1) {
+            console.log("---Part 2---");
             firstFlashSync = step;
             console.log(firstFlashSync);
             exit();
@@ -118,7 +124,6 @@ function calculatePartOne() {
     // Part 1 solution
     if (step === 100) {
       console.log(totalFlashes);
-      console.log("---Part 2---");
     }
 
     function incrementOctopi(position) {
