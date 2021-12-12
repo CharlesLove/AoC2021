@@ -100,26 +100,24 @@ function calculatePartOneAndTwo() {
       incrementOctopi(br);
     }
 
-    // 3. Set octopi above 9 back to 0
-    for (let y = 0; y < octopiMatrix.length; y++) {
-      for (let x = 0; x < octopiMatrix[y].length; x++) {
-        let octopiEnergy = octopiMatrix[y][x];
-        if (octopiEnergy > 9) {
-          octopiEnergy = 0;
-          totalFlashes++;
-          flashesThisStep++;
-          //console.log(flashesThisStep);
-          if (flashesThisStep === octopiCount && firstFlashSync === -1) {
-            if (step < 100) {
-              console.log("---Part 2---");
-            }
-            firstFlashSync = step;
-            console.log(firstFlashSync);
-            exit();
-          }
+    // 3. Set flashed octopi back to 0
+    for (let i = 0; i < octopiToFlash.length; i++) {
+      const position = octopiToFlash[i];
+      let x = position[0];
+      let y = position[1];
+      let octopiEnergy = octopiMatrix[y][x];
+      octopiEnergy = 0;
+      totalFlashes++;
+      flashesThisStep++;
+      if (flashesThisStep === octopiCount && firstFlashSync === -1) {
+        if (step < 100) {
+          console.log("---Part 2---");
         }
-        octopiMatrix[y][x] = octopiEnergy;
+        firstFlashSync = step;
+        console.log(firstFlashSync);
+        exit();
       }
+      octopiMatrix[y][x] = octopiEnergy;
     }
 
     // Part 1 solution
@@ -138,19 +136,13 @@ function calculatePartOneAndTwo() {
         y < octopiMatrix.length
       ) {
         let octopiEnergy = octopiMatrix[y][x];
-        //if (octopiEnergy <= 10) {
         octopiEnergy += 1;
         octopiMatrix[y][x] = octopiEnergy;
         // add to flash array
-        if (
-          octopiEnergy === 10 //&&
-          //octopiToFlash.indexOf([x, y].toString()) === -1
-        ) {
-          //console.log(`${step}: ${[x, y]}`);
+        if (octopiEnergy === 10) {
           octopiToFlash.push([x, y]);
         }
       }
-      //}
     }
   }
 }
