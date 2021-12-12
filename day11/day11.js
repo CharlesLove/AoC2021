@@ -56,6 +56,8 @@ function calculatePartOneAndTwo() {
   let firstFlashSync = -1;
 
   for (let step = 1; step <= Infinity; step++) {
+    //console.log(`Step ${step}`);
+
     let octopiToFlash = new Array();
     let flashesThisStep = 0;
     // 1. increment everything by 1
@@ -68,7 +70,6 @@ function calculatePartOneAndTwo() {
 
     // 2. Flash the correct octopi
     for (let i = 0; i < octopiToFlash.length; i++) {
-      let octPosition = octopiToFlash[i];
       let octPositionX = octopiToFlash[i][0];
       let octPositionY = octopiToFlash[i][1];
       let tl = [octPositionX - 1, octPositionY - 1],
@@ -137,21 +138,19 @@ function calculatePartOneAndTwo() {
         y < octopiMatrix.length
       ) {
         let octopiEnergy = octopiMatrix[y][x];
-        if (octopiEnergy <= 10) {
-          octopiEnergy += 1;
-          octopiMatrix[y][x] = octopiEnergy;
-          // add to flash array
-          if (
-            octopiEnergy > 9 &&
-            octopiEnergy <= 10 &&
-            octopiToFlash.indexOf([x, y].toString()) === -1
-          ) {
-            octopiToFlash.push([x, y]);
-          }
+        //if (octopiEnergy <= 10) {
+        octopiEnergy += 1;
+        octopiMatrix[y][x] = octopiEnergy;
+        // add to flash array
+        if (
+          octopiEnergy === 10 //&&
+          //octopiToFlash.indexOf([x, y].toString()) === -1
+        ) {
+          //console.log(`${step}: ${[x, y]}`);
+          octopiToFlash.push([x, y]);
         }
       }
+      //}
     }
   }
 }
-
-function calculatePartTwo() {}
