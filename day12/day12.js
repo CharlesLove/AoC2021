@@ -52,6 +52,7 @@ function numSort(a, b) {
 
 function calculatePartOne() {
   let pathsArray = [];
+  let completedPaths = [];
   let nodeDict = new Object();
   let endCount = 0;
 
@@ -104,16 +105,18 @@ function calculatePartOne() {
       let finalizedPath = [];
 
       curNodeChildren.forEach((child) => {
+        let pathToChild = curPath.concat(child);
         // check if lowercase
         let isLowercase = child.toLowerCase() === child;
         // check if child is already in path and lowercase
         if (isLowercase && curPath.indexOf(child) !== -1) {
           //continue;
         } else {
-          let pathToChild = curPath.concat(child);
-          // console.log(pathToChild);
-          // console.log(`Path to ${child}: ${pathToChild}`);
-          finalizedPath.push(pathToChild);
+          if (child === "end") {
+            completedPaths.push(pathToChild.toString());
+          } else {
+            finalizedPath.push(pathToChild);
+          }
         }
       });
 
@@ -129,6 +132,9 @@ function calculatePartOne() {
 
   console.log("Final path array:");
   console.log(pathsArray);
+
+  console.log("Completed paths:");
+  console.log(completedPaths);
 
   // start can go to A and b
   //
