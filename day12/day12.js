@@ -27,6 +27,15 @@ switch (filePicker) {
   case 5:
     filename = "day12/big.boy";
     break;
+  case 5:
+    filename = "day12/bigger.boy";
+    break;
+  case 5:
+    filename = "day12/biggerer.boy";
+    break;
+  case 5:
+    filename = "day12/biggest.boy";
+    break;
   default:
     console.log("Incorrect parameter.");
     exit();
