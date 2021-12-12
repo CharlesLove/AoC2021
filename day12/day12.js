@@ -43,8 +43,8 @@ console.log(input);
 
 console.log("---Part 1---");
 calculatePartOne();
-console.log("---Part 2---");
-calculatePartTwo();
+// console.log("---Part 2---");
+// calculatePartTwo();
 
 // class Node {
 //   constructor(value, parents, children) {
@@ -59,22 +59,71 @@ function numSort(a, b) {
 
 function calculatePartOne() {
   let nodeDict = new Object();
+  let nodeVisitCount = new Object();
+  let pathArray = new Array();
 
-  // populate the node dictionary
+  // Populate the node dictionary
   for (let i = 0; i < input.length; i++) {
     let lineArray = input[i].split("-");
     let nodeStart = lineArray[0];
     let nodeEnd = lineArray[1];
-    console.log(`${nodeStart}, ${nodeEnd}`);
-    console.log(lineArray);
+
     if (nodeDict[nodeStart] === undefined) {
       nodeDict[nodeStart] = [nodeEnd];
     } else {
       //nodeDict[nodeStart] = nodeEnd;
       nodeDict[nodeStart].push(nodeEnd);
     }
+    // do make sure the children have dictionary items too
+
+    if (!(nodeStart === "start" || nodeEnd === "end")) {
+      if (nodeDict[nodeEnd] === undefined) {
+        nodeDict[nodeEnd] = [nodeStart];
+      } else {
+        //nodeDict[nodeStart] = nodeEnd;
+        nodeDict[nodeEnd].push(nodeStart);
+      }
+    }
+    nodeVisitCount[nodeStart] = 0;
+    nodeVisitCount[nodeEnd] = 0;
   }
 
+  // Visit all paths and add to path array
+  visitNode("start");
+
   console.log(nodeDict);
+  console.log(nodeVisitCount);
+
+  function visitNode(inputNode) {
+    console.log(`Visiting: ${inputNode}`);
+    let curChildren = nodeDict[inputNode];
+    nodeVisitCount[inputNode] += 1;
+
+    //console.log(curChildren);
+    if (curChildren !== undefined) {
+      curChildren.forEach((child) => {
+        // check if child has already been visited
+        let visitCount = nodeVisitCount[child];
+        let isLowerCase =
+          child[0] === child[0].toLowerCase() &&
+          child !== "start" &&
+          child !== "end";
+        console.log(visitCount);
+        if (isLowerCase && visitCount >= 1) {
+          // don't visit
+        } else {
+          if (child !== "end") {
+            visitNode(child);
+          } else {
+            console.log("end");
+            pathArray.push("something");
+            return;
+          }
+        }
+      });
+    }
+  }
+
+  console.log(pathArray.length);
 }
 function calculatePartTwo() {}
