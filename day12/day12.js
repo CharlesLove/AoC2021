@@ -43,8 +43,8 @@ input = input.filter((e) => e);
 
 console.log("---Part 1---");
 calculatePartOne();
-// console.log("---Part 2---");
-// calculatePartTwo();
+console.log("---Part 2---");
+calculatePartTwo();
 
 function numSort(a, b) {
   return +a - +b;
@@ -136,4 +136,118 @@ function calculatePartOne() {
 
   console.log(completedPaths.length);
 }
-function calculatePartTwo() {}
+function calculatePartTwo() {
+  let completedPaths = [];
+  let nodeDict = new Object();
+  let lowerCaseDict = new Object();
+
+  // Populate the node dictionary
+  // and lowerCase dictionary
+  for (let i = 0; i < input.length; i++) {
+    let lineArray = input[i].split("-");
+    let nodeStart = lineArray[0];
+    let nodeEnd = lineArray[1];
+
+    if (nodeDict[nodeStart] === undefined) {
+      nodeDict[nodeStart] = [nodeEnd];
+    } else {
+      nodeDict[nodeStart].push(nodeEnd);
+    }
+    // do make sure the children have dictionary items too
+
+    if (!(nodeStart === "start" || nodeEnd === "end")) {
+      if (nodeDict[nodeEnd] === undefined) {
+        nodeDict[nodeEnd] = [nodeStart];
+      } else {
+        //nodeDict[nodeStart] = nodeEnd;
+        nodeDict[nodeEnd].push(nodeStart);
+      }
+      if (
+        nodeStart.toLowerCase() === nodeStart &&
+        nodeStart !== ("start" || "end")
+      ) {
+        lowerCaseDict[nodeStart] = true;
+      }
+      if (nodeEnd.toLowerCase() === nodeEnd && nodeEnd !== ("start" || "end")) {
+        lowerCaseDict[nodeEnd] = true;
+      }
+    }
+  }
+  console.log(lowerCaseDict);
+
+  //console.log(pathsArray);
+
+  // for every lowercase letter run the following
+  // allowing that lowercase letter to be visited twice
+  Object.keys(lowerCaseDict).forEach(function (key) {
+    let doubleNode = key;
+    let curLevel = 1;
+
+    let pathsArray = [];
+
+    console.log(doubleNode);
+
+    // add start to arrays
+    {
+      let starts = nodeDict["start"];
+      starts.forEach((next) => {
+        pathsArray.push(["start", next]);
+      });
+    }
+    while (pathsArray.length > 0) {
+      let newPaths = [];
+      for (let i = 0; i < pathsArray.length; i++) {
+        let curPath = pathsArray[i];
+
+        let curNode = pathsArray[i][curLevel];
+
+        // find children
+        let curNodeChildren = nodeDict[curNode];
+
+        curNodeChildren.forEach((child) => {
+          let pathToChild = curPath.concat(child);
+          // check if lowercase
+          let isLowercase = child.toLowerCase() === child;
+
+          // check if child is double capable and has been used twice
+          let isDoubleNode = child === doubleNode;
+
+          let doubledExceeded =
+            isDoubleNode && curPath.filter((n) => n === child).length === 2;
+
+          // check if child is already in path and lowercase
+          if (
+            (isDoubleNode && doubledExceeded) ||
+            (isLowercase && !isDoubleNode && curPath.indexOf(child) !== -1)
+          ) {
+            //continue;
+          } else {
+            if (child === "end") {
+              if (completedPaths.indexOf(pathToChild.toString()) === -1)
+                completedPaths.push(pathToChild.toString());
+            } else {
+              //finalizedPath.push(pathToChild);
+              newPaths.push(pathToChild);
+            }
+          }
+        });
+
+        //curPath = finalizedPath;
+        //pathsArray[i] = curPath;
+        //newPaths.push(finalizedPath);
+      }
+
+      pathsArray = newPaths;
+      //break;
+      curLevel++;
+    }
+  });
+
+  // console.log("Final working path array:");
+  // console.log(pathsArray);
+
+  console.log("Completed paths:");
+  console.log(completedPaths);
+
+  console.log(completedPaths.length);
+}
