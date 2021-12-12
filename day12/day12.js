@@ -92,7 +92,8 @@ function calculatePartOne() {
 
   let curLevel = 1;
 
-  while (pathsArray.length != endCount) {
+  while (pathsArray.length > 0) {
+    let newPaths = [];
     for (let i = 0; i < pathsArray.length; i++) {
       let curPath = pathsArray[i];
 
@@ -100,9 +101,6 @@ function calculatePartOne() {
 
       // find children
       let curNodeChildren = nodeDict[curNode];
-      //console.log(curNodeChildren);
-
-      let finalizedPath = [];
 
       curNodeChildren.forEach((child) => {
         let pathToChild = curPath.concat(child);
@@ -115,28 +113,28 @@ function calculatePartOne() {
           if (child === "end") {
             completedPaths.push(pathToChild.toString());
           } else {
-            finalizedPath.push(pathToChild);
+            //finalizedPath.push(pathToChild);
+            newPaths.push(pathToChild);
           }
         }
       });
 
-      //console.log("Finalized path:");
-      //console.log(finalizedPath);
-
-      curPath = finalizedPath;
-      pathsArray[i] = curPath;
+      //curPath = finalizedPath;
+      //pathsArray[i] = curPath;
+      //newPaths.push(finalizedPath);
     }
-    break;
+
+    pathsArray = newPaths;
+    //break;
     curLevel++;
   }
 
-  console.log("Final path array:");
+  console.log("Final working path array:");
   console.log(pathsArray);
 
   console.log("Completed paths:");
   console.log(completedPaths);
 
-  // start can go to A and b
-  //
+  console.log(completedPaths.length);
 }
 function calculatePartTwo() {}
