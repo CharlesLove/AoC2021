@@ -72,12 +72,10 @@ function calculatePartOne() {
       if (nodeDict[nodeEnd] === undefined) {
         nodeDict[nodeEnd] = [nodeStart];
       } else {
-        //nodeDict[nodeStart] = nodeEnd;
         nodeDict[nodeEnd].push(nodeStart);
       }
     }
   }
-  //console.log(nodeDict);
 
   // add start to arrays
   {
@@ -86,8 +84,6 @@ function calculatePartOne() {
       pathsArray.push(["start", next]);
     });
   }
-
-  //console.log(pathsArray);
 
   let curLevel = 1;
 
@@ -112,27 +108,17 @@ function calculatePartOne() {
           if (child === "end") {
             completedPaths.push(pathToChild.toString());
           } else {
-            //finalizedPath.push(pathToChild);
             newPaths.push(pathToChild);
           }
         }
       });
 
-      //curPath = finalizedPath;
-      //pathsArray[i] = curPath;
-      //newPaths.push(finalizedPath);
     }
 
     pathsArray = newPaths;
-    //break;
     curLevel++;
   }
 
-  // console.log("Final working path array:");
-  // console.log(pathsArray);
-
-  // console.log("Completed paths:");
-  // console.log(completedPaths);
 
   console.log(completedPaths.length);
 }
@@ -159,7 +145,6 @@ function calculatePartTwo() {
       if (nodeDict[nodeEnd] === undefined) {
         nodeDict[nodeEnd] = [nodeStart];
       } else {
-        //nodeDict[nodeStart] = nodeEnd;
         nodeDict[nodeEnd].push(nodeStart);
       }
       if (
@@ -173,9 +158,6 @@ function calculatePartTwo() {
       }
     }
   }
-  console.log(lowerCaseDict);
-
-  //console.log(pathsArray);
 
   // for every lowercase letter run the following
   // allowing that lowercase letter to be visited twice
@@ -184,8 +166,6 @@ function calculatePartTwo() {
     let curLevel = 1;
 
     let pathsArray = [];
-
-    console.log(doubleNode);
 
     // add start to arrays
     {
@@ -223,31 +203,21 @@ function calculatePartTwo() {
             //continue;
           } else {
             if (child === "end") {
-              if (completedPaths.indexOf(pathToChild.toString()) === -1)
-                completedPaths.push(pathToChild.toString());
+              completedPaths.push(pathToChild.toString());
             } else {
-              //finalizedPath.push(pathToChild);
               newPaths.push(pathToChild);
             }
           }
         });
-
-        //curPath = finalizedPath;
-        //pathsArray[i] = curPath;
-        //newPaths.push(finalizedPath);
       }
 
       pathsArray = newPaths;
-      //break;
       curLevel++;
     }
   });
 
-  // console.log("Final working path array:");
-  // console.log(pathsArray);
-
-  console.log("Completed paths:");
-  console.log(completedPaths);
+  // get rid of duplicates
+  completedPaths = [...new Set(completedPaths)];
 
   console.log(completedPaths.length);
 }
