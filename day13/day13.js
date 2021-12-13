@@ -48,15 +48,13 @@ let inputFolds = [];
 }
 
 console.log("---Part 1---");
-calculatePartOne();
-console.log("---Part 2---");
-calculatePartTwo();
+calculatePartOneAndTwo();
 
 function numSort(a, b) {
   return +a - +b;
 }
 
-function calculatePartOne() {
+function calculatePartOneAndTwo() {
   let paperSizeX = 0,
     paperSizeY = 0;
   // find max paper size
@@ -94,6 +92,7 @@ function calculatePartOne() {
 
   //console.log(paperMatrix);
 
+  let foldCount = 1;
   // go through each fold instruction
   inputFolds.forEach((foldInstruction) => {
     let axis = foldInstruction[0];
@@ -149,8 +148,27 @@ function calculatePartOne() {
 
         break;
     }
+
+    if (foldCount === 1) {
+      let dotCount = 0;
+      for (let y = 0; y < paperMatrix.length; y++) {
+        for (let x = 0; x < paperMatrix[y].length; x++) {
+          let character = paperMatrix[y][x];
+
+          if (character === "#") {
+            dotCount++;
+          }
+        }
+      }
+      console.log(dotCount);
+      console.log("---Part 2---");
+    }
+    foldCount++;
   });
 
-  console.log(paperMatrix);
+  // part 2
+  // print out a grid that is easier to read
+  for (let y = 0; y < paperMatrix.length; y++) {
+    console.log(paperMatrix[y].toString());
+  }
 }
-function calculatePartTwo() {}
