@@ -98,13 +98,14 @@ function calculatePartOne() {
   inputFolds.forEach((foldInstruction) => {
     let axis = foldInstruction[0];
     let foldPoint = foldInstruction[1];
+    let combinedFold = [];
     //console.log(`Axis: ${axis} Fold Point: ${foldPoint}`);
 
     switch (axis) {
       case "y":
         let topHalf = paperMatrix.slice(0, foldPoint);
         let bottomHalf = paperMatrix.slice(foldPoint + 1).reverse();
-        let combinedFold = topHalf;
+        combinedFold = topHalf;
 
         // console.log("Top half");
         // console.log(topHalf);
@@ -119,22 +120,37 @@ function calculatePartOne() {
 
             if (topChar === "#" || botChar === "#") {
               combinedFold[y][x] = "#";
-            } else {
-              // might be unecessary
-              combinedFold[y][x] = ".";
             }
           }
         }
 
-        //console.log(combinedFold);
         paperMatrix = combinedFold;
 
         break;
       case "x":
+        // fold along x
+        // will have to be sliced per y line
+        combinedFold = [];
+        for (let y = 0; y < paperMatrix.length; y++) {
+          let leftHalf = paperMatrix[y].slice(0, foldPoint);
+          let rightHalf = paperMatrix[y].slice(foldPoint + 1).reverse();
+          let combinedHalf = leftHalf;
+
+          // combine left half and flipped right half
+          for (let x = 0; x < leftHalf.length; x++) {
+            if (leftHalf[x] === "#" || rightHalf[x] === "#") {
+              combinedHalf[x] = "#";
+            }
+          }
+          combinedFold.push(combinedHalf);
+        }
+
+        paperMatrix = combinedFold;
+
         break;
     }
-
   });
+
   console.log(paperMatrix);
 }
 function calculatePartTwo() {}
