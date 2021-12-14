@@ -11,6 +11,9 @@ let filename = "";
 
 let filePicker = parseInt(myArgs[0]);
 
+let isBigBoy = false;
+let bigBoySteps = -1;
+
 switch (filePicker) {
   case 0:
     filename = "day14/test_input.txt";
@@ -20,6 +23,15 @@ switch (filePicker) {
     break;
   case 2:
     filename = "day14/big.boy";
+    bigBoySteps = 100000;
+    break;
+  case 3:
+    filename = "day14/big.boy";
+    bigBoySteps = 200000;
+    break;
+  case 4:
+    filename = "day14/big.boy";
+    bigBoySteps = 1000000;
     break;
 }
 
@@ -43,27 +55,32 @@ parseInput: {
   }
 }
 
-console.log("---Part 1---");
-calculateSteps(10);
-console.log("---Part 2---");
-calculateSteps(40);
+if (bigBoySteps === -1) {
+  console.log("---Part 1---");
+  calculateSteps(10);
+  console.log("---Part 2---");
+  calculateSteps(40);
+} else {
+  console.log(`---${bigBoySteps} times---`);
+  calculateSteps(bigBoySteps);
+}
 
 function calculateSteps(inSteps) {
   let workTemplate = inTemplate;
   let lastTemplateLetter = inTemplate[inTemplate.length - 1];
   let letterCountDict = new Object();
-  letterCountDict[lastTemplateLetter] = 1;
+  letterCountDict[lastTemplateLetter] = 1n;
 
   let pairDictCount = new Object();
   Object.keys(rulesDict).forEach(function (key) {
-    pairDictCount[key] = 0;
+    pairDictCount[key] = 0n;
   });
 
   let lastLetter = inTemplate[0];
 
   for (let i = 1; i < workTemplate.length; i++) {
     let curLetter = workTemplate[i];
-    pairDictCount[lastLetter + curLetter] += 1;
+    pairDictCount[lastLetter + curLetter] += 1n;
     lastLetter = curLetter;
   }
 
@@ -101,7 +118,14 @@ function calculateSteps(inSteps) {
     if (value < leastCommonCount) leastCommonCount = value;
   });
 
-  let partTwoAnswer = mostCommonCount - leastCommonCount;
+  let answer = (mostCommonCount - leastCommonCount).toString();
 
-  console.log(partTwoAnswer);
+  if (bigBoySteps === -1) {
+    console.log(answer);
+  } else {
+    let digits = answer.length;
+    let firstTen = answer.slice(0,10);
+    let lastTen = answer.slice(digits - 10);
+    console.log(`${digits} digits ${firstTen}...${lastTen}`);
+  }
 }
