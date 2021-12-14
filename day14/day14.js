@@ -53,8 +53,10 @@ function numSort(a, b) {
   return +a - +b;
 }
 
-function calculatePartOne() {
+function calculatePartOne_old() {
   for (let step = 1; step <= 10; step++) {
+    let indexAndInsertion = [];
+
     let rulesToApply = [];
     inRules.forEach((inRule) => {
       if (inTemplate.includes(inRule[0])) {
@@ -62,52 +64,92 @@ function calculatePartOne() {
       }
     });
 
-    console.log("Rules to apply:")
+    // console.log("Rules to apply:")
     console.log(rulesToApply);
 
-    // apply all rules at the same time
-    let sortedRules = [rulesToApply.length];
-
-    // sort rules
     rulesToApply.forEach((applyRule) => {
-      let combIndex = inTemplate.search(applyRule[0]);
-      sortedRules[combIndex] = [applyRule[0], applyRule[1]];
+      let offSet = 0;
+      let tempTemplate = inTemplate;
 
-      // inTemplate = inTemplate.replace(applyRule[0], applyRule[0][0] + applyRule[1] + applyRule[0][1]);
-    });
-    console.log("Sorted rules");
-    console.log(sortedRules);
+      while (tempTemplate.includes(applyRule[0])) {
+        let foundIndex = tempTemplate.search(applyRule[0]) + offSet;
+        indexAndInsertion[foundIndex] = [foundIndex, applyRule[1]];
 
-    // combine rules
-    let combinedRule = [
-      sortedRules[0][0],
-      sortedRules[0][0][0] + sortedRules[0][1] + sortedRules[0][0][1],
-    ];
-
-    for (let i = 1; i < sortedRules.length; i++) {
-      if(sortedRules[i] === undefined){
-        // use what was already there
-        sortedRules[i] = [`${inTemplate[i]}${inTemplate[i+1]}`,""]
+        tempTemplate = tempTemplate.replace(applyRule[0],"");
+        offSet += 1;
+        
       }
-      console.log(sortedRules[i]);
-      let trailingLetter = sortedRules[i][0][1];
-      let insertedLetter = sortedRules[i][1];
-      combinedRule[0] += trailingLetter;
-      combinedRule[1] += insertedLetter + trailingLetter;
-      
+    });
+
+    console.log(indexAndInsertion);
+
+    // insert into template (minding offsets)
+    let offset = 1;
+    for (let i = 0; i < indexAndInsertion.length; i++) {
+      if (indexAndInsertion[i]) {
+        let indexToUse = indexAndInsertion[i][0] + offset;
+        let prefix = inTemplate.slice(0,indexToUse);
+        let suffix = inTemplate.slice(indexToUse);
+        let insertLetter = indexAndInsertion[i][1].toString();
+        console.log(prefix);
+        console.log(insertLetter);
+        console.log(suffix);
+
+        inTemplate = prefix + insertLetter + suffix;
+
+
+        offset++;
+      }
     }
 
-    console.log("Combined rule:")
-    console.log(combinedRule);
-    
+    // // apply all rules at the same time
+    // let sortedRules = [rulesToApply.length];
+
+    // // sort rules
+    // rulesToApply.forEach((applyRule) => {
+    //   let combIndex = inTemplate.search(applyRule[0]);
+    //   sortedRules[combIndex] = [applyRule[0], applyRule[1]];
+
+    //   // inTemplate = inTemplate.replace(applyRule[0], applyRule[0][0] + applyRule[1] + applyRule[0][1]);
+    // });
+    // console.log("Sorted rules");
+    // console.log(sortedRules);
+
+    // // combine rules
+    // let combinedRule = [
+    //   sortedRules[0][0],
+    //   sortedRules[0][0][0] + sortedRules[0][1] + sortedRules[0][0][1],
+    // ];
+
+    // for (let i = 1; i < sortedRules.length; i++) {
+    //   if(sortedRules[i] === undefined){
+    //     // use what was already there
+    //     sortedRules[i] = [`${inTemplate[i]}${inTemplate[i+1]}`,""]
+    //   }
+    //   console.log(sortedRules[i]);
+    //   let trailingLetter = sortedRules[i][0][1];
+    //   let insertedLetter = sortedRules[i][1];
+    //   combinedRule[0] += trailingLetter;
+    //   combinedRule[1] += insertedLetter + trailingLetter;
+
+    // }
+
+    // console.log("Combined rule:")
+    // console.log(combinedRule);
+
     // console.log(rulesToApply);
     // console.log(inTemplate);
-    
-    inTemplate = inTemplate.replace(combinedRule[0],combinedRule[1]);
-    
+
+    //inTemplate = inTemplate.replace(combinedRule[0],combinedRule[1]);
+
     console.log(`After step ${step}:\t${inTemplate}`);
+
+    if (step === 4) break;
   }
 
   //console.log(inTemplate);
+}
+function calculatePartOne(){
+  console.log(inTemplate);
 }
 function calculatePartTwo() {}
