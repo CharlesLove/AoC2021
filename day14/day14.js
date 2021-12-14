@@ -155,7 +155,7 @@ function calculatePartOne_old() {
 }
 function calculatePartOne() {
   let workTemplate = inTemplate;
-  console.log(`Template:\t${workTemplate}`);
+  //console.log(`Template:\t${workTemplate}`);
 
   for (let step = 1; step <= 10; step++) {
     // break template up into pairs
@@ -237,4 +237,78 @@ function calculatePartOne() {
 
   console.log(partOneAnswer);
 }
-function calculatePartTwo() {}
+
+function calculatePartTwo() {
+  let workTemplate = inTemplate;
+  // hint: the last element when you start will always be at the end
+  // countup the first letter for every pair
+  let lastTemplateLetter = inTemplate[inTemplate.length - 1];
+  let letterCountDict = new Object();
+  letterCountDict[lastTemplateLetter] = 1;
+  //console.log(lastTemplateLetter);
+
+  let pairDictCount = new Object();
+  Object.keys(rulesDict).forEach(function (key) {
+    pairDictCount[key] = 0;
+  });
+  //console.log(pairDictCount);
+
+  let lastLetter = inTemplate[0];
+
+  for (let i = 1; i < workTemplate.length; i++) {
+    let curLetter = workTemplate[i];
+    pairDictCount[lastLetter + curLetter] += 1;
+    lastLetter = curLetter;
+  }
+  //console.log("Template:");
+  //console.log(pairDictCount);
+
+  for (let step = 1; step <= 40; step++) {
+    let tempCountDict = Object.assign({}, pairDictCount);
+
+    Object.keys(tempCountDict).forEach(function (key) {
+      let value = tempCountDict[key];
+      //console.log(value);
+      if (value > 0) {
+        let newLetter = rulesDict[key];
+        let pair1 = key[0] + newLetter,
+          pair2 = newLetter + key[1];
+        pairDictCount[pair1] += value;
+        pairDictCount[pair2] += value;
+        pairDictCount[key] -= value;
+        //console.log(pair1);
+        //console.log(pair2);
+      }
+    });
+    //console.log(tempCountDict);
+
+    //console.log(`After step ${step}:`);
+    //console.log(pairDictCount);
+  }
+
+  Object.keys(pairDictCount).forEach(function (key) {
+    let letterToCount = key[0];
+    let count = pairDictCount[key];
+    if (letterCountDict[letterToCount] === undefined) {
+      letterCountDict[letterToCount] = count;
+    } else {
+      letterCountDict[letterToCount] += count;
+    }
+  });
+  //console.log(letterCountDict);
+
+  // TODO: pair counting is missing some pairs
+
+  let mostCommonCount = -Infinity,
+    leastCommonCount = Infinity;
+
+  Object.keys(letterCountDict).forEach(function (key) {
+    let value = letterCountDict[key];
+    if (value > mostCommonCount) mostCommonCount = value;
+    if (value < leastCommonCount) leastCommonCount = value;
+  });
+
+  let partTwoAnswer = mostCommonCount - leastCommonCount;
+
+  console.log(partTwoAnswer);
+}
