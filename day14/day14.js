@@ -48,7 +48,7 @@ parseInput: {
 }
 // console.log(inTemplate);
 // console.log(inRules);
-console.log(rulesDict);
+//console.log(rulesDict);
 
 console.log("---Part 1---");
 calculatePartOne();
@@ -157,10 +157,7 @@ function calculatePartOne() {
   let workTemplate = inTemplate;
   console.log(`Template:\t${workTemplate}`);
 
-  // find all the indices where the rules are found
-  // the same rule can be found multiple time, so check for that
-
-  for (let step = 1; step <= 4; step++) {
+  for (let step = 1; step <= 10; step++) {
     // break template up into pairs
     let pairArray = [];
     let lastLetter = workTemplate[0];
@@ -186,33 +183,58 @@ function calculatePartOne() {
     }
 
     //console.log(pairArray)
-    workTemplate = pairArray.join("") + workTemplate[workTemplate.length -1];
+    workTemplate = pairArray.join("") + workTemplate[workTemplate.length - 1];
     //console.log(workTemplate);
 
     //rebuild the template
     // array.forEach(element => {
-      
+
     // });
     // insert last letter
 
-    console.log(`After step ${step}:\t${workTemplate}`);
-    switch (step) {
-      case 1:
-        console.log(workTemplate === "NCNBCHB")
-        break;
-      case 2:
-        console.log(workTemplate === "NBCCNBBBCBHCB")
-        break;
-      case 3:
-        console.log(workTemplate === "NBBBCNCCNBBNBNBBCHBHHBCHB")
-        break;
-      case 4:
-        console.log(workTemplate === "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB")
-        break;
-    
-      default:
-        break;
-    }
+    // console.log(`After step ${step}:\t${workTemplate}`);
+    // switch (step) {
+    //   case 1:
+    //     console.log(workTemplate === "NCNBCHB");
+    //     break;
+    //   case 2:
+    //     console.log(workTemplate === "NBCCNBBBCBHCB");
+    //     break;
+    //   case 3:
+    //     console.log(workTemplate === "NBBBCNCCNBBNBNBBCHBHHBCHB");
+    //     break;
+    //   case 4:
+    //     console.log(
+    //       workTemplate === "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB"
+    //     );
+    //     break;
+
+    //   default:
+    //     break;
+    // }
   }
+
+  // count the letters
+  let letterUseDict = new Object();
+  workTemplate.split("").forEach((character) => {
+    if (letterUseDict[character] === undefined) {
+      letterUseDict[character] = 1;
+    } else {
+      letterUseDict[character] += 1;
+    }
+  });
+
+  let mostCommonCount = -Infinity,
+    leastCommonCount = Infinity;
+
+  Object.keys(letterUseDict).forEach(function (key) {
+    let value = letterUseDict[key];
+    if (value > mostCommonCount) mostCommonCount = value;
+    if (value < leastCommonCount) leastCommonCount = value;
+  });
+
+  let partOneAnswer = mostCommonCount - leastCommonCount;
+
+  console.log(partOneAnswer);
 }
 function calculatePartTwo() {}
