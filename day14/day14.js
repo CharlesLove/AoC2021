@@ -27,6 +27,7 @@ console.log("---- Running: " + filename + " ----");
 
 let inTemplate = "";
 let inRules = [];
+let rulesDict = new Object();
 
 parseInput: {
   input = fs.readFileSync(filename).toString("utf-8");
@@ -36,13 +37,18 @@ parseInput: {
   inTemplate = input[0];
   inRules = input.slice(1);
 
+  // for (let i = 0; i < inRules.length; i++) {
+  //   const rule = inRules[i].split(" -> ");
+  //   inRules[i] = rule;
+  // }
   for (let i = 0; i < inRules.length; i++) {
     const rule = inRules[i].split(" -> ");
-    inRules[i] = rule;
+    rulesDict[rule[0]] = rule[1];
   }
 }
 // console.log(inTemplate);
 // console.log(inRules);
+console.log(rulesDict);
 
 console.log("---Part 1---");
 calculatePartOne();
@@ -75,9 +81,8 @@ function calculatePartOne_old() {
         let foundIndex = tempTemplate.search(applyRule[0]) + offSet;
         indexAndInsertion[foundIndex] = [foundIndex, applyRule[1]];
 
-        tempTemplate = tempTemplate.replace(applyRule[0],"");
+        tempTemplate = tempTemplate.replace(applyRule[0], "");
         offSet += 1;
-        
       }
     });
 
@@ -88,7 +93,7 @@ function calculatePartOne_old() {
     for (let i = 0; i < indexAndInsertion.length; i++) {
       if (indexAndInsertion[i]) {
         let indexToUse = indexAndInsertion[i][0] + offset;
-        let prefix = inTemplate.slice(0,indexToUse);
+        let prefix = inTemplate.slice(0, indexToUse);
         let suffix = inTemplate.slice(indexToUse);
         let insertLetter = indexAndInsertion[i][1].toString();
         console.log(prefix);
@@ -96,7 +101,6 @@ function calculatePartOne_old() {
         console.log(suffix);
 
         inTemplate = prefix + insertLetter + suffix;
-
 
         offset++;
       }
@@ -149,7 +153,66 @@ function calculatePartOne_old() {
 
   //console.log(inTemplate);
 }
-function calculatePartOne(){
-  console.log(inTemplate);
+function calculatePartOne() {
+  let workTemplate = inTemplate;
+  console.log(`Template:\t${workTemplate}`);
+
+  // find all the indices where the rules are found
+  // the same rule can be found multiple time, so check for that
+
+  for (let step = 1; step <= 4; step++) {
+    // break template up into pairs
+    let pairArray = [];
+    let lastLetter = workTemplate[0];
+
+    for (let i = 1; i < workTemplate.length; i++) {
+      let curLetter = workTemplate[i];
+      pairArray.push(lastLetter + curLetter);
+      lastLetter = curLetter;
+    }
+
+    //console.log(pairArray);
+
+    // for every pair, find if there's a match and
+    // insert it, the original last letter of pair is lost
+    for (let i = 0; i < pairArray.length; i++) {
+      let curPair = pairArray[i];
+      let insertion = rulesDict[curPair];
+      if (insertion !== undefined) {
+        curPair = curPair[0] + insertion;
+        //console.log(curPair);
+      }
+      pairArray[i] = curPair;
+    }
+
+    //console.log(pairArray)
+    workTemplate = pairArray.join("") + workTemplate[workTemplate.length -1];
+    //console.log(workTemplate);
+
+    //rebuild the template
+    // array.forEach(element => {
+      
+    // });
+    // insert last letter
+
+    console.log(`After step ${step}:\t${workTemplate}`);
+    switch (step) {
+      case 1:
+        console.log(workTemplate === "NCNBCHB")
+        break;
+      case 2:
+        console.log(workTemplate === "NBCCNBBBCBHCB")
+        break;
+      case 3:
+        console.log(workTemplate === "NBBBCNCCNBBNBNBBCHBHHBCHB")
+        break;
+      case 4:
+        console.log(workTemplate === "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB")
+        break;
+    
+      default:
+        break;
+    }
+  }
 }
 function calculatePartTwo() {}
