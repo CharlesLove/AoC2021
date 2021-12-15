@@ -56,7 +56,13 @@ class PriorityQueue {
   printPQueue() {
     var str = "";
     for (let i = 0; i < this.items.length; i++) {
-      str += this.items[i].element + " ";
+      str +=
+        "[" +
+        this.items[i].element.x +
+        "," +
+        this.items[i].element.y +
+        "]" +
+        " ";
     }
     return str;
   }
@@ -66,6 +72,14 @@ class Cell {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+  }
+}
+
+function areCellsEqual(cell1, cell2) {
+  if (cell1.x === cell2.x && cell1.y === cell2.y) {
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -104,6 +118,9 @@ for (let y = 0; y < input.length; y++) {
   graph.push(line);
 }
 
+// make the starting point have a cost of 0
+//graph[0][0] = 0;
+
 console.log(graph);
 
 console.log("---Part 1---");
@@ -116,23 +133,6 @@ function numSort(a, b) {
 }
 
 function calculatePartOne() {
-  // let priorityQueue = new PriorityQueue();
-  // console.log(priorityQueue.isEmpty());
-  // console.log(priorityQueue.front());
-
-  // priorityQueue.enqueue("Sumit", 2);
-  // priorityQueue.enqueue("Gourav", 1);
-  // priorityQueue.enqueue("Piyush", 1);
-  // priorityQueue.enqueue("Sunny", 2);
-  // priorityQueue.enqueue("Sheru", 3);
-
-  // console.log(priorityQueue.printPQueue());
-  // console.log(priorityQueue.front().element);
-  // console.log(priorityQueue.rear().element);
-  // console.log(priorityQueue.dequeue().element);
-  // priorityQueue.enqueue("Sunil", 2);
-  // console.log(priorityQueue.printPQueue());
-
   // start and goal arrays are [x, y]
   let start = new Cell(0, 0);
   let goal = new Cell(graph[0].length - 1, graph.length - 1);
@@ -144,15 +144,17 @@ function calculatePartOne() {
   frontier.enqueue(start, 0);
   let cameFrom = new Object();
   let costSoFar = new Object();
+  console.log(costSoFar);
+
   cameFrom[start] = null;
   costSoFar[start] = 0;
 
+  console.log(cameFrom[start]);
+
   while (!frontier.isEmpty()) {
     let current = frontier.front().element;
-    frontier.dequeue();
 
-
-    console.log(current);
+    console.log(`---Current Cell: ${current.x},${current.y}---`);
     let curNeighbors = [];
 
     if (current === goal) {
@@ -167,34 +169,54 @@ function calculatePartOne() {
         leftNeighbor = new Cell(current.x - 1, current.y),
         rightNeighbor = new Cell(current.x + 1, current.y);
       // handle below
-      if (belowNeighbor.y < graph.length) {
+      if (
+        belowNeighbor.y < graph.length &&
+        !areCellsEqual(start, belowNeighbor)
+      ) {
         curNeighbors.push(belowNeighbor);
+        console.log("below is valid");
       }
 
       // handle right
-      if (rightNeighbor.x < graph[0].length) {
+      if (
+        rightNeighbor.x < graph[0].length &&
+        !areCellsEqual(start, rightNeighbor)
+      ) {
         curNeighbors.push(rightNeighbor);
+        console.log("right is valid");
       }
 
       // handle above
-      if (aboveNeighbor.y >= 0) {
+      if (aboveNeighbor.y >= 0 && !areCellsEqual(start, aboveNeighbor)) {
         curNeighbors.push(aboveNeighbor);
+        console.log("above is valid");
       }
 
       // handle left
-      if (leftNeighbor.x >= 0) {
+      if (leftNeighbor.x >= 0 && !areCellsEqual(start, leftNeighbor)) {
         curNeighbors.push(leftNeighbor);
+        console.log("left is valid");
       }
     }
+    console.log(start);
     console.log(curNeighbors);
 
     curNeighbors.forEach((next) => {
+      console.log(`Next Cell: ${next.x},${next.y}`);
       let curCellCost = graph[current.y][current.x];
       let nextCellCost = graph[next.y][next.x];
 
       let newCost = costSoFar[current] + (curCellCost + nextCellCost);
 
-      console.log(costSoFar);
+      console.log(`currentCellCost: ${curCellCost}`);
+      console.log(`nextCellCost: ${nextCellCost}`);
+      console.log(`newCost: ${newCost}`);
+
+      console.log(`costSoFar[next]: ${costSoFar[next]}`);
+
+      // TODO: costSoFar is likely having issues with cells which
+      // is leading to buggy queue behavor
+
       if (costSoFar[next] === 0 || newCost < costSoFar[next]) {
         costSoFar[next] = newCost;
         let priority = newCost + heuristic(goal, next);
@@ -205,6 +227,10 @@ function calculatePartOne() {
         console.log(next);
       }
     });
+
+    console.log("Frontier queue: " + frontier.printPQueue());
+    frontier.dequeue();
+    console.log("Frontier queue (after dequeue): " + frontier.printPQueue());
   }
 }
 function calculatePartTwo() {}
