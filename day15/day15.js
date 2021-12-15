@@ -107,6 +107,9 @@ switch (filePicker) {
   case 2:
     filename = "day15/big.boy";
     break;
+  case 3:
+    filename = "day15/bigger.boy";
+    break;
 }
 
 console.log("---- Running: " + filename + " ----");
