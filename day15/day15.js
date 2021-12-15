@@ -70,11 +70,7 @@ class Cell {
 }
 
 function heuristic(a, b) {
-  let aX = a[0],
-    aY = a[1],
-    bX = b[0],
-    bY = b[1];
-  return Math.abs(aX - bX) + Math.abs(aY - bY);
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
 
 let fs = require("fs");
@@ -154,6 +150,8 @@ function calculatePartOne() {
   while (!frontier.isEmpty()) {
     let current = frontier.front().element;
     frontier.dequeue();
+
+
     console.log(current);
     let curNeighbors = [];
 
@@ -179,15 +177,16 @@ function calculatePartOne() {
       }
 
       // handle above
-      if (aboveNeighbor.y > 0) {
+      if (aboveNeighbor.y >= 0) {
         curNeighbors.push(aboveNeighbor);
       }
 
       // handle left
-      if (leftNeighbor.x > 0) {
+      if (leftNeighbor.x >= 0) {
         curNeighbors.push(leftNeighbor);
       }
     }
+    console.log(curNeighbors);
 
     curNeighbors.forEach((next) => {
       let curCellCost = graph[current.y][current.x];
@@ -195,11 +194,15 @@ function calculatePartOne() {
 
       let newCost = costSoFar[current] + (curCellCost + nextCellCost);
 
-      if (costSoFar[next] === undefined || newCost < costSoFar[next]) {
+      console.log(costSoFar);
+      if (costSoFar[next] === 0 || newCost < costSoFar[next]) {
         costSoFar[next] = newCost;
         let priority = newCost + heuristic(goal, next);
         frontier.enqueue(next, priority);
         cameFrom[next] = current;
+
+        console.log("Enqueued:");
+        console.log(next);
       }
     });
   }
