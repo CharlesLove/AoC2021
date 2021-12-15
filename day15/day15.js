@@ -87,6 +87,10 @@ function cellString(cell) {
   return `${cell.x},${cell.y}`;
 }
 
+function getRiskLevel(cell) {
+  return graph[cell.y][cell.y];
+}
+
 function heuristic(a, b) {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
@@ -141,19 +145,19 @@ function calculatePartOne() {
   let start = new Cell(0, 0);
   let goal = new Cell(graph[0].length - 1, graph.length - 1);
 
-  console.log(start);
-  console.log(goal);
+  //console.log(start);
+  //console.log(goal);
 
   let frontier = new PriorityQueue();
   frontier.enqueue(start, 0);
   let cameFrom = new Object();
   let costSoFar = new Object();
-  console.log(costSoFar);
+  //console.log(costSoFar);
 
   cameFrom[cellString(start)] = null;
   costSoFar[cellString(start)] = 0;
 
-  console.log(cameFrom[start]);
+  //console.log(cameFrom[start]);
 
   while (!frontier.isEmpty()) {
     let current = frontier.front().element;
@@ -161,7 +165,7 @@ function calculatePartOne() {
     console.log(`---Current Cell: ${current.x},${current.y}---`);
     let curNeighbors = [];
 
-    if (current === goal) {
+    if (areCellsEqual(current, goal)) {
       console.log("Goal reached");
       break;
     }
@@ -178,7 +182,7 @@ function calculatePartOne() {
         !areCellsEqual(start, belowNeighbor)
       ) {
         curNeighbors.push(belowNeighbor);
-        console.log("below is valid");
+        //console.log("below is valid");
       }
 
       // handle right
@@ -187,54 +191,73 @@ function calculatePartOne() {
         !areCellsEqual(start, rightNeighbor)
       ) {
         curNeighbors.push(rightNeighbor);
-        console.log("right is valid");
+        //console.log("right is valid");
       }
 
       // handle above
       if (aboveNeighbor.y >= 0 && !areCellsEqual(start, aboveNeighbor)) {
         curNeighbors.push(aboveNeighbor);
-        console.log("above is valid");
+        //console.log("above is valid");
       }
 
       // handle left
       if (leftNeighbor.x >= 0 && !areCellsEqual(start, leftNeighbor)) {
         curNeighbors.push(leftNeighbor);
-        console.log("left is valid");
+        //console.log("left is valid");
       }
     }
-    console.log(start);
-    console.log(curNeighbors);
+    //console.log(start);
+    //console.log(curNeighbors);
 
     curNeighbors.forEach((next) => {
-      console.log(`Next Cell: ${next.x},${next.y}`);
+      //console.log(`Next Cell: ${next.x},${next.y}`);
       let curCellCost = graph[current.y][current.x];
       let nextCellCost = graph[next.y][next.x];
 
-      let newCost = costSoFar[cellString(current)] + (curCellCost + nextCellCost);
+      let newCost =
+        costSoFar[cellString(current)] + (curCellCost + nextCellCost);
 
-      console.log(`currentCellCost: ${curCellCost}`);
-      console.log(`nextCellCost: ${nextCellCost}`);
-      console.log(`newCost: ${newCost}`);
+      // console.log(`currentCellCost: ${curCellCost}`);
+      // console.log(`nextCellCost: ${nextCellCost}`);
+      // console.log(`newCost: ${newCost}`);
 
-      console.log(`costSoFar[next]: ${costSoFar[next]}`);
+      // console.log(`costSoFar[next]: ${costSoFar[next]}`);
 
       // TODO: costSoFar is likely having issues with cells which
       // is leading to buggy queue behavor
 
-      if (costSoFar[cellString(next)] === undefined || newCost < costSoFar[next]) {
+      if (
+        costSoFar[cellString(next)] === undefined ||
+        newCost < costSoFar[next]
+      ) {
         costSoFar[cellString(next)] = newCost;
         let priority = newCost + heuristic(goal, next);
         frontier.enqueue(next, priority);
         cameFrom[cellString(next)] = current;
 
-        console.log("Enqueued:");
-        console.log(next);
+        //console.log("Enqueued:");
+        //console.log(next);
       }
     });
 
-    console.log("Frontier queue: " + frontier.printPQueue());
+    // console.log("Frontier queue: " + frontier.printPQueue());
     frontier.dequeue();
-    console.log("Frontier queue (after dequeue): " + frontier.printPQueue());
+    // console.log("Frontier queue (after dequeue): " + frontier.printPQueue());
   }
+
+  console.log(costSoFar);
+  console.log(cameFrom[cellString(goal)]);
+
+  let riskLevel = getRiskLevel(start);
+
+  // unravel to get to start
+  let lastNode = cameFrom[cellString(goal)];
+  while (!areCellsEqual(lastNode, start)) {
+    console.log(cameFrom[cellString(lastNode)]);
+    lastNode = cameFrom[cellString(lastNode)];
+    riskLevel += getRiskLevel(lastNode);
+  }
+
+  console.log(riskLevel);
 }
 function calculatePartTwo() {}
