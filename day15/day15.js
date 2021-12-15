@@ -129,7 +129,7 @@ for (let y = 0; y < input.length; y++) {
 // make the starting point have a cost of 0
 //graph[0][0] = 0;
 
-console.log(graph);
+//console.log(graph);
 
 console.log("---Part 1---");
 calculatePartOne();
@@ -163,11 +163,11 @@ function calculatePartOne() {
     let current = frontier.front().element;
     frontier.dequeue();
 
-    console.log(`---Current Cell: ${current.x},${current.y}---`);
+    //console.log(`---Current Cell: ${current.x},${current.y}---`);
     let curNeighbors = [];
 
     if (areCellsEqual(current, goal)) {
-      console.log("Goal reached");
+      //console.log("Goal reached");
       break;
     }
 
@@ -180,25 +180,25 @@ function calculatePartOne() {
       // handle below
       if (belowNeighbor.y < graph.length) {
         curNeighbors.push(belowNeighbor);
-        console.log("below is valid");
+        //console.log("below is valid");
       }
 
       // handle right
       if (rightNeighbor.x < graph[0].length) {
         curNeighbors.push(rightNeighbor);
-        console.log("right is valid");
+        //console.log("right is valid");
       }
 
       // handle above
       if (aboveNeighbor.y >= 0) {
         curNeighbors.push(aboveNeighbor);
-        console.log("above is valid");
+        //console.log("above is valid");
       }
 
       // handle left
       if (leftNeighbor.x >= 0) {
         curNeighbors.push(leftNeighbor);
-        console.log("left is valid");
+        //console.log("left is valid");
       }
     }
     //console.log(start);
@@ -240,21 +240,27 @@ function calculatePartOne() {
     // console.log("Frontier queue (after dequeue): " + frontier.printPQueue());
   }
 
-  console.log(costSoFar);
-  console.log(cameFrom[cellString(goal)]);
-
-  console.log(cellString(goal));
-
-  let riskLevel = getRiskLevel(goal);
-  console.log(riskLevel);
+  let riskLevel = 0;
+  //console.log(cellString(goal));
+  //console.log(riskLevel);
 
   // unravel to get to start
-  let lastNode = cameFrom[cellString(goal)];
-  while (!areCellsEqual(lastNode, start)) {
-    console.log(cameFrom[cellString(lastNode)]);
-    riskLevel += getRiskLevel(lastNode);
-    console.log(riskLevel);
-    lastNode = cameFrom[cellString(lastNode)];
+  // let lastNode = goal;
+  // while (!areCellsEqual(lastNode, start)) {
+  //   console.log(cameFrom[cellString(lastNode)]);
+  //   riskLevel += getRiskLevel(lastNode);
+  //   console.log(riskLevel);
+  //   lastNode = cameFrom[cellString(lastNode)];
+  // }
+
+  let curCell = new Cell(goal.x, goal.y);
+
+  while (!areCellsEqual(curCell, start)) {
+    let cellRiskLevel = graph[curCell.y][curCell.x];
+    //console.log(`${cellString(curCell)}: ${cellRiskLevel}`);
+    riskLevel += graph[curCell.y][curCell.x];
+
+    curCell = cameFrom[cellString(curCell)];
   }
 
   console.log(riskLevel);
