@@ -83,6 +83,10 @@ function areCellsEqual(cell1, cell2) {
   }
 }
 
+function cellString(cell) {
+  return `${cell.x},${cell.y}`;
+}
+
 function heuristic(a, b) {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
@@ -146,8 +150,8 @@ function calculatePartOne() {
   let costSoFar = new Object();
   console.log(costSoFar);
 
-  cameFrom[start] = null;
-  costSoFar[start] = 0;
+  cameFrom[cellString(start)] = null;
+  costSoFar[cellString(start)] = 0;
 
   console.log(cameFrom[start]);
 
@@ -206,7 +210,7 @@ function calculatePartOne() {
       let curCellCost = graph[current.y][current.x];
       let nextCellCost = graph[next.y][next.x];
 
-      let newCost = costSoFar[current] + (curCellCost + nextCellCost);
+      let newCost = costSoFar[cellString(current)] + (curCellCost + nextCellCost);
 
       console.log(`currentCellCost: ${curCellCost}`);
       console.log(`nextCellCost: ${nextCellCost}`);
@@ -217,11 +221,11 @@ function calculatePartOne() {
       // TODO: costSoFar is likely having issues with cells which
       // is leading to buggy queue behavor
 
-      if (costSoFar[next] === 0 || newCost < costSoFar[next]) {
-        costSoFar[next] = newCost;
+      if (costSoFar[cellString(next)] === undefined || newCost < costSoFar[next]) {
+        costSoFar[cellString(next)] = newCost;
         let priority = newCost + heuristic(goal, next);
         frontier.enqueue(next, priority);
-        cameFrom[next] = current;
+        cameFrom[cellString(next)] = current;
 
         console.log("Enqueued:");
         console.log(next);
