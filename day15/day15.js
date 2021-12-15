@@ -87,10 +87,6 @@ function cellString(cell) {
   return `${cell.x},${cell.y}`;
 }
 
-function getRiskLevel(cell) {
-  return graph[cell.y][cell.y];
-}
-
 function heuristic(a, b) {
   return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
@@ -126,48 +122,48 @@ for (let y = 0; y < input.length; y++) {
   graph.push(line);
 }
 
-// make the starting point have a cost of 0
-//graph[0][0] = 0;
+let bigGraph = [];
 
-//console.log(graph);
+// create bigGraph
+for (let bigY = 0; bigY < 5 * graph.length; bigY++) {
+  let originalY = bigY % graph.length;
+  let bigYLine = [];
+  for (let bigX = 0; bigX < 5 * graph[0].length; bigX++) {
+    let originalX = bigX % graph[0].length;
+    let increment =
+      Math.floor(bigY / graph.length) + Math.floor(bigX / graph[0].length);
 
-console.log("---Part 1---");
-calculatePartOne();
-console.log("---Part 2---");
-calculatePartTwo();
-
-function numSort(a, b) {
-  return +a - +b;
+    let newValue = graph[originalY][originalX] + increment;
+    if (newValue > 9) newValue -= 9;
+    bigYLine.push(newValue);
+  }
+  bigGraph.push(bigYLine);
 }
 
-function calculatePartOne() {
-  // start and goal arrays are [x, y]
-  let start = new Cell(0, 0);
-  let goal = new Cell(graph[0].length - 1, graph.length - 1);
+console.log("---Part 1---");
+calculateRiskLevel(graph);
+console.log("---Part 2---");
+calculateRiskLevel(bigGraph);
 
-  //console.log(start);
-  //console.log(goal);
+function calculateRiskLevel(inGraph) {
+  let start = new Cell(0, 0);
+  let goal = new Cell(inGraph[0].length - 1, inGraph.length - 1);
 
   let frontier = new PriorityQueue();
   frontier.enqueue(start, 0);
   let cameFrom = new Object();
   let costSoFar = new Object();
-  //console.log(costSoFar);
 
   cameFrom[cellString(start)] = null;
   costSoFar[cellString(start)] = 0;
-
-  //console.log(cameFrom[start]);
 
   while (!frontier.isEmpty()) {
     let current = frontier.front().element;
     frontier.dequeue();
 
-    //console.log(`---Current Cell: ${current.x},${current.y}---`);
     let curNeighbors = [];
 
     if (areCellsEqual(current, goal)) {
-      //console.log("Goal reached");
       break;
     }
 
@@ -178,48 +174,32 @@ function calculatePartOne() {
         leftNeighbor = new Cell(current.x - 1, current.y),
         rightNeighbor = new Cell(current.x + 1, current.y);
       // handle below
-      if (belowNeighbor.y < graph.length) {
+      if (belowNeighbor.y < inGraph.length) {
         curNeighbors.push(belowNeighbor);
-        //console.log("below is valid");
       }
 
       // handle right
-      if (rightNeighbor.x < graph[0].length) {
+      if (rightNeighbor.x < inGraph[0].length) {
         curNeighbors.push(rightNeighbor);
-        //console.log("right is valid");
       }
 
       // handle above
       if (aboveNeighbor.y >= 0) {
         curNeighbors.push(aboveNeighbor);
-        //console.log("above is valid");
       }
 
       // handle left
       if (leftNeighbor.x >= 0) {
         curNeighbors.push(leftNeighbor);
-        //console.log("left is valid");
       }
     }
-    //console.log(start);
-    //console.log(curNeighbors);
 
     curNeighbors.forEach((next) => {
-      //console.log(`Next Cell: ${next.x},${next.y}`);
-      let curCellCost = graph[current.y][current.x];
-      let nextCellCost = graph[next.y][next.x];
+      let curCellCost = inGraph[current.y][current.x];
+      let nextCellCost = inGraph[next.y][next.x];
 
       let newCost =
         costSoFar[cellString(current)] + (curCellCost + nextCellCost);
-
-      // console.log(`currentCellCost: ${curCellCost}`);
-      // console.log(`nextCellCost: ${nextCellCost}`);
-      // console.log(`newCost: ${newCost}`);
-
-      // console.log(`costSoFar[next]: ${costSoFar[next]}`);
-
-      // TODO: costSoFar is likely having issues with cells which
-      // is leading to buggy queue behavor
 
       if (
         costSoFar[cellString(next)] === undefined ||
@@ -229,40 +209,19 @@ function calculatePartOne() {
         let priority = newCost + heuristic(goal, next);
         frontier.enqueue(next, priority);
         cameFrom[cellString(next)] = current;
-
-        //console.log("Enqueued:");
-        //console.log(next);
       }
     });
-
-    // console.log("Frontier queue: " + frontier.printPQueue());
-    //frontier.dequeue();
-    // console.log("Frontier queue (after dequeue): " + frontier.printPQueue());
   }
 
   let riskLevel = 0;
-  //console.log(cellString(goal));
-  //console.log(riskLevel);
-
-  // unravel to get to start
-  // let lastNode = goal;
-  // while (!areCellsEqual(lastNode, start)) {
-  //   console.log(cameFrom[cellString(lastNode)]);
-  //   riskLevel += getRiskLevel(lastNode);
-  //   console.log(riskLevel);
-  //   lastNode = cameFrom[cellString(lastNode)];
-  // }
 
   let curCell = new Cell(goal.x, goal.y);
 
   while (!areCellsEqual(curCell, start)) {
-    let cellRiskLevel = graph[curCell.y][curCell.x];
-    //console.log(`${cellString(curCell)}: ${cellRiskLevel}`);
-    riskLevel += graph[curCell.y][curCell.x];
+    riskLevel += inGraph[curCell.y][curCell.x];
 
     curCell = cameFrom[cellString(curCell)];
   }
 
   console.log(riskLevel);
 }
-function calculatePartTwo() {}
