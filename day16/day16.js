@@ -12,14 +12,17 @@ let filePicker = parseInt(myArgs[0]);
 
 switch (filePicker) {
   case 0:
-    filename = "day16/test_input.txt";
+    filename = "day16/test_input1.txt";
     break;
   case 1:
-    filename = "day16/input.txt";
+    filename = "day16/test_input2.txt";
     break;
-  case 2:
-    filename = "day16/big.boy";
-    break;
+  // case 1:
+  //   filename = "day16/input.txt";
+  //   break;
+  // case 2:
+  //   filename = "day16/big.boy";
+  //   break;
 }
 
 console.log("---- Running: " + filename + " ----");
@@ -44,23 +47,15 @@ function calculatePartOne() {
   let binaryInput = hexToBinary(input);
   console.log(binaryInput);
 
-  let packetVersion = parseInt(binaryInput.slice(0, 3), 2);
-  let typeID = parseInt(binaryInput.slice(3, 6), 2);
-  console.log(packetVersion);
-  console.log(typeID);
+  let finished = false;
 
-  // literal value
-  if (typeID === 4) {
-    let literalBinary = "";
-    for (let i = 6; i < binaryInput.length; i += 5) {
-      let subValue = binaryInput.slice(i + 1, i + 5);
-      literalBinary += subValue;
+  // [finished?, packet]
+  let nextStep = [false, binaryInput];
+  while (!finished) {
+    nextStep = readPacket(nextStep[1]);
 
-      if (binaryInput[i] === "0") break;
-    }
-
-    console.log(literalBinary);
-    console.log(parseInt(literalBinary, 2));
+    finished = nextStep[0];
+    console.log(finished);
   }
 }
 function calculatePartTwo() {}
@@ -120,4 +115,47 @@ function hexToBinary(hexString) {
     }
   });
   return binaryString;
+}
+
+function readPacket(packet) {
+  let packetVersion = parseInt(packet.slice(0, 3), 2);
+  let typeID = parseInt(packet.slice(3, 6), 2);
+  console.log(packetVersion);
+  console.log(typeID);
+
+  // literal value
+  if (typeID === 4) {
+    let literalBinary = "";
+    for (let i = 6; i < packet.length; i += 5) {
+      let subValue = packet.slice(i + 1, i + 5);
+      literalBinary += subValue;
+
+      if (packet[i] === "0") break;
+    }
+
+    // for test input 1:
+    // 2021
+    console.log(literalBinary);
+    console.log(parseInt(literalBinary, 2));
+    return [true,""];
+  }
+  // operator
+  else {
+    let lengthTypeID = packet[6];
+    console.log(lengthTypeID);
+    let totalLength, subPacketNumber;
+    let subPacket = [];
+    if (lengthTypeID === "0") {
+      totalLength = packet.slice(7, 7 + 15);
+      console.log(totalLength);
+      totalLength = parseInt(totalLength, 2);
+      console.log(totalLength);
+      for (let i = 7; i <= 7 + totalLength; i++) {
+        let subPacketValue = parseInt(packet.slice(7));
+
+        if (packet[i] === "0") break;
+      }
+    } else {
+    }
+  }
 }
