@@ -83,7 +83,7 @@ function areCellsEqual(cell1, cell2) {
   }
 }
 
-function cellString(cell) {
+function cellToString(cell) {
   return `${cell.x},${cell.y}`;
 }
 
@@ -164,8 +164,8 @@ function calculateRiskLevel(inGraph) {
   let cameFrom = new Map();
   let costSoFar = new Map();
 
-  cameFrom.set(cellString(start), start);
-  costSoFar.set(cellString(start), 0);
+  cameFrom.set(cellToString(start), start);
+  costSoFar.set(cellToString(start), 0);
   // cameFrom[cellString(start)] = null;
   // costSoFar[cellString(start)] = 0;
 
@@ -210,17 +210,17 @@ function calculateRiskLevel(inGraph) {
       let nextCellCost = inGraph[next.y][next.x];
 
       let newCost =
-        costSoFar.get(cellString(current)) + nextCellCost;
+        costSoFar.get(cellToString(current)) + nextCellCost;
 
       if (
-        !costSoFar.has(cellString(next)) ||
-        newCost < costSoFar.get(cellString(next))
+        !costSoFar.has(cellToString(next)) ||
+        newCost < costSoFar.get(cellToString(next))
       ) {
-        costSoFar.set(cellString(next), newCost);
+        costSoFar.set(cellToString(next), newCost);
         let priority = newCost + heuristic(goal, next);
         //let priority = newCost + altHeuristic(goal, next);
         frontier.enqueue(next, priority);
-        cameFrom.set(cellString(next), current);
+        cameFrom.set(cellToString(next), current);
         // cameFrom[cellString(next)] = current;
       }
     });
@@ -233,10 +233,10 @@ function calculateRiskLevel(inGraph) {
   while (!areCellsEqual(curCell, start)) {
     riskLevel += inGraph[curCell.y][curCell.x];
 
-    curCell = cameFrom.get(cellString(curCell));
+    curCell = cameFrom.get(cellToString(curCell));
   }
 
-  console.log(cameFrom.size);
+  //console.log(cameFrom.size);
 
   console.log(riskLevel);
 }
