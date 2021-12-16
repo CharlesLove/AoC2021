@@ -49,10 +49,10 @@ function calculatePartOne() {
 
   let finished = false;
 
-  // [finished?, packet]
-  let nextStep = [false, binaryInput];
+  // [finished?, packet, lengthLeft, packetsLeft]
+  let nextStep = [false, binaryInput, binaryInput.length, 1];
   while (!finished) {
-    nextStep = readPacket(nextStep[1]);
+    nextStep = readPacket(nextStep[1], nextStep[2], nextStep[3]);
 
     finished = nextStep[0];
     console.log(finished);
@@ -117,27 +117,42 @@ function hexToBinary(hexString) {
   return binaryString;
 }
 
-function readPacket(packet) {
+function readPacket(packet, lengthLeft, packetsLeft) {
   let packetVersion = parseInt(packet.slice(0, 3), 2);
   let typeID = parseInt(packet.slice(3, 6), 2);
   console.log(packetVersion);
   console.log(typeID);
 
+  let remainingPacket = packet;
+
   // literal value
   if (typeID === 4) {
+    packetsLeft -= 1;
     let literalBinary = "";
-    for (let i = 6; i < packet.length; i += 5) {
+    for (let i = 6; i < lengthLeft; i += 5) {
       let subValue = packet.slice(i + 1, i + 5);
+      remainingPacket = remainingPacket.slice(i + 5);
       literalBinary += subValue;
 
-      if (packet[i] === "0") break;
+      lengthLeft--;
+
+      if (packet[i] === "0" && lengthLeft > 0 && packetsLeft > 0) {
+        console.log("remainingPacket");
+        console.log(remainingPacket);
+        packetsLeft += 1;
+        break;
+      }
     }
 
     // for test input 1:
     // 2021
     console.log(literalBinary);
     console.log(parseInt(literalBinary, 2));
-    return [true,""];
+    if (lengthLeft > 0 && packetsLeft > 0) {
+      return [false, remainingPacket, lengthLeft, packetsLeft];
+    } else {
+      return [true, "", lengthLeft, packetsLeft];
+    }
   }
   // operator
   else {
@@ -150,11 +165,12 @@ function readPacket(packet) {
       console.log(totalLength);
       totalLength = parseInt(totalLength, 2);
       console.log(totalLength);
-      for (let i = 7; i <= 7 + totalLength; i++) {
-        let subPacketValue = parseInt(packet.slice(7));
-
-        if (packet[i] === "0") break;
-      }
+      return [
+        false,
+        packet.slice(7 + 15, 7 + 15 + totalLength),
+        totalLength,
+        packetsLeft,
+      ];
     } else {
     }
   }
