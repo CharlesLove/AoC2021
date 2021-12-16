@@ -87,8 +87,13 @@ function cellString(cell) {
   return `${cell.x},${cell.y}`;
 }
 
-function heuristic(a, b) {
-  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+function heuristic(goal, next) {
+  return Math.abs(goal.x - next.x) + Math.abs(goal.y - next.y);
+}
+
+function altHeuristic(goal, next) {
+  let diag = Math.max(next.x + 1, next.y + 1);
+  return Math.abs(goal.x - diag) + Math.abs(goal.y - diag);
 }
 
 let fs = require("fs");
@@ -154,11 +159,15 @@ function calculateRiskLevel(inGraph) {
 
   let frontier = new PriorityQueue();
   frontier.enqueue(start, 0);
-  let cameFrom = new Object();
-  let costSoFar = new Object();
+  // let cameFrom = new Object();
+  // let costSoFar = new Object();
+  let cameFrom = new Map();
+  let costSoFar = new Map();
 
-  cameFrom[cellString(start)] = null;
-  costSoFar[cellString(start)] = 0;
+  cameFrom.set(cellString(start),null);
+  costSoFar.set(cellString(start),0);
+  // cameFrom[cellString(start)] = null;
+  // costSoFar[cellString(start)] = 0;
 
   while (!frontier.isEmpty()) {
     let current = frontier.front().element;
@@ -202,16 +211,18 @@ function calculateRiskLevel(inGraph) {
       let nextCellCost = inGraph[next.y][next.x];
 
       let newCost =
-        costSoFar[cellString(current)] + (curCellCost + nextCellCost);
+        costSoFar.get(cellString(current)) + (curCellCost + nextCellCost);
 
       if (
-        costSoFar[cellString(next)] === undefined ||
-        newCost < costSoFar[cellString(next)]
+        costSoFar.get(cellString(next)) === undefined ||
+        newCost < costSoFar.get(cellString(next))
       ) {
-        costSoFar[cellString(next)] = newCost;
+        costSoFar.set(cellString(next), newCost);
         let priority = newCost + heuristic(goal, next);
+        //let priority = newCost + altHeuristic(goal, next);
         frontier.enqueue(next, priority);
-        cameFrom[cellString(next)] = current;
+        cameFrom.set(cellString(next),current);
+        // cameFrom[cellString(next)] = current;
       }
     });
   }
@@ -223,7 +234,7 @@ function calculateRiskLevel(inGraph) {
   while (!areCellsEqual(curCell, start)) {
     riskLevel += inGraph[curCell.y][curCell.x];
 
-    curCell = cameFrom[cellString(curCell)];
+    curCell = cameFrom.get(cellString(curCell));
   }
 
   console.log(riskLevel);
