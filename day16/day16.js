@@ -3,7 +3,7 @@ class Packet {
   children;
   version;
   typeID;
-  literalValue;
+  value;
   lengthTypeID;
   totalSubpacketLength;
   numberSubpackets;
@@ -32,39 +32,13 @@ class Packet {
         }
       }
       //this.bitLength += litBinary.length;
-      this.literalValue = parseInt(litBinary, 2);
+      this.value = parseInt(litBinary, 2);
 
       globalPacketArray.push(this);
     } else {
-      switch (this.typeID) {
-        case 0:
-          this.type = "sum";
-          break;
-        case 1:
-          this.type = "product";
-          break;
-        case 2:
-          this.type = "minimum";
-          break;
-        case 3:
-          this.type = "maximum";
-          break;
-        case 5:
-          this.type = "greater than";
-          break;
-        case 6:
-          this.type = "less than";
-          break;
-        case 7:
-          this.type = "equal to";
-          break;
-        default:
-          this.type = "operator";
-          break;
-      }
-
       this.lengthTypeID = parseInt(bIn[6], 2);
       this.bitLength += 1;
+      this.children = [];
 
       if (this.lengthTypeID === 0) {
         this.totalSubpacketLength = parseInt(bIn.slice(7, 22), 2);
@@ -75,8 +49,6 @@ class Packet {
         let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
         let subPacketBitsSoFar = 0;
         let thisSegment = subPacketSegment;
-
-        this.children = [];
 
         while (thisSegment.length > 0) {
           this.children.push(globalPacketArray.length);
@@ -96,7 +68,7 @@ class Packet {
         // packets
         let subPacketSegment = bIn.slice(18);
         let subPacketBitsSoFar = 0;
-        this.children = [];
+        //this.children = [];
 
         for (let i = 0; i < this.numberSubpackets; i++) {
           this.children.push(globalPacketArray.length);
@@ -109,6 +81,79 @@ class Packet {
         this.bitLength += subPacketBitsSoFar;
 
         //globalPacketArray[thisIndex] = this;
+      }
+
+      switch (this.typeID) {
+        case 0:
+          this.value = 0;
+          this.type = "sum";
+          this.children.forEach((child) => {
+            this.value += globalPacketArray[child].value;
+          });
+          break;
+        case 1:
+          this.value = 1;
+          this.type = "product";
+          this.children.forEach((child) => {
+            this.value *= globalPacketArray[child].value;
+          });
+          break;
+        case 2:
+          this.type = "minimum";
+          let thisMinimum = Infinity;
+          this.children.forEach((child) => {
+            if (globalPacketArray[child].value < thisMinimum) {
+              thisMinimum = globalPacketArray[child].value;
+            }
+          });
+          this.value = thisMinimum;
+          break;
+        case 3:
+          this.type = "maximum";
+          let thisMaximum = -Infinity;
+          this.children.forEach((child) => {
+            if (globalPacketArray[child].value > thisMaximum) {
+              thisMaximum = globalPacketArray[child].value;
+            }
+          });
+          this.value = thisMaximum;
+          break;
+        case 5:
+          this.type = "greater than";
+          if (
+            globalPacketArray[this.children[0]].value >
+            globalPacketArray[this.children[1]].value
+          ) {
+            this.value = 1;
+          } else {
+            this.value = 0;
+          }
+          break;
+        case 6:
+          this.type = "less than";
+          if (
+            globalPacketArray[this.children[0]].value <
+            globalPacketArray[this.children[1]].value
+          ) {
+            this.value = 1;
+          } else {
+            this.value = 0;
+          }
+          break;
+        case 7:
+          this.type = "equal to";
+          if (
+            globalPacketArray[this.children[0]].value ===
+            globalPacketArray[this.children[1]].value
+          ) {
+            this.value = 1;
+          } else {
+            this.value = 0;
+          }
+          break;
+        default:
+          this.type = "operator";
+          break;
       }
     }
   }
@@ -242,4 +287,6 @@ function calculatePartOne() {
 
   console.log(versionSum);
 }
-function calculatePartTwo() {}
+function calculatePartTwo() {
+  console.log(globalPacketArray[0].value);
+}
