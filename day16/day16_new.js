@@ -5,16 +5,22 @@
 // .txt in memory
 
 class Packet {
+  type = "";
   version;
   typeID;
-  literals = [];
+  literal;
+  lengthTypeID;
+  subPacketLength;
+  subPacketNumImmContained;
   subPacket = [];
 
   constructor(binary) {
     this.version = parseInt(binary.slice(0, 3), 2);
     this.typeID = parseInt(binary.slice(3, 6), 2);
     let remainingBinary = binary.slice(6);
+    // literal
     if (this.typeID === 4) {
+      this.type = "literal";
       let literalBinary = "";
       for (let i = 0; i < remainingBinary.length; i += 5) {
         let subValue = remainingBinary.slice(i + 1, i + 5);
@@ -25,7 +31,23 @@ class Packet {
           break;
         }
       }
-      this.literals.push(parseInt(literalBinary, 2));
+      this.literal = parseInt(literalBinary, 2);
+    }
+    // operator
+    else {
+      this.type = "operator";
+      this.lengthTypeID = parseInt(binary[6]);
+      let leftOverBinary;
+      if (this.lengthTypeID === 0) {
+        this.subPacketLength = parseInt(binary.slice(7, 7 + 15), 2);
+        leftOverBinary = binary.slice(7 + 15);
+
+        // create and add subpackets
+        console.log(leftOverBinary);
+      } else {
+        this.subPacketNumImmContained = parseInt(binary.slice(7, 7 + 11), 2);
+        leftOverBinary = binary.slice(7 + 11);
+      }
     }
   }
 }
