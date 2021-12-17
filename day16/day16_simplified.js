@@ -1,4 +1,5 @@
 let fs = require("fs");
+const { exit } = require("process");
 var myArgs = process.argv.slice(2);
 let filename = "";
 
@@ -86,7 +87,7 @@ class Packet {
       this.finalIndex = bIndex;
     } else {
       this.type = "operator";
-      this.lengthTypeID = parseInt(binaryInput[bIndex + 1], 2);
+      this.lengthTypeID = parseInt(binaryInput[bIndex], 2);
       bIndex += 1;
 
       if (this.lengthTypeID === 0) {
@@ -108,7 +109,29 @@ class Packet {
         }
 
         //bIndex = subPacketLastIndex;
-        this.finalIndex = bIndex ;
+        this.finalIndex = bIndex;
+      } else {
+				console.log(bIndex);
+        //console.log(binaryInput.slice(bIndex, bIndex + 11));
+        this.subPacketCount = parseInt(
+          binaryInput.slice(bIndex, bIndex + 11),
+          2
+        );
+        bIndex += 11;
+
+        //let subPacketLastIndex = bIndex + this.subPacketLength;
+        //console.log(subPacketLastIndex);
+
+        for (let i = 0; i < this.subPacketCount; i++) {
+          //console.log(binaryInput.slice(bIndex, binaryInput.length));
+          let subPacket = new Packet(bIndex, binaryInput.length);
+          this.subPackets.push(subPacket);
+
+          bIndex = subPacket.finalIndex - 1;
+        }
+
+        //bIndex = subPacketLastIndex;
+        this.finalIndex = bIndex;
       }
     }
   }
