@@ -64,6 +64,15 @@ class Packet {
       } else {
         this.subPacketNumImmContained = parseInt(binary.slice(7, 7 + 11), 2);
         leftOverBinary = binary.slice(7 + 11);
+        console.log(leftOverBinary);
+
+        for (let i = 0; i < this.subPacketNumImmContained; i++) {
+          let subPacket = new Packet(leftOverBinary, leftOverBinary.length);
+
+          this.subPackets.push(subPacket);
+
+          leftOverBinary = subPacket.binaryLeftover;
+        }
       }
     }
   }
