@@ -43,6 +43,7 @@ input = input[0];
 
 let binaryInput = hexToBinary(input);
 console.log(binaryInput);
+console.log(binaryInput.length);
 
 //let packetCollection = new Map();
 
@@ -55,8 +56,9 @@ class Packet {
   subPacketLength;
   subPacketCount;
   subPackets = [];
+  finalIndex;
   constructor(bStart, bEnd) {
-    console.log(binaryInput.slice(bStart, bEnd));
+    //console.log(binaryInput.slice(bStart, bEnd));
     if (bEnd === undefined) bEnd = binaryInput.length;
 
     // bIndex allow you to know where in the binary you are
@@ -74,12 +76,40 @@ class Packet {
 
       for (let i = bIndex; i < bEnd; i += 5) {
         litBinary += binaryInput.slice(i + 1, i + 5);
+        bIndex += 6;
 
         if (binaryInput[i] === "0") {
           break;
         }
       }
       this.literalValue = parseInt(litBinary, 2);
+      this.finalIndex = bIndex;
+    } else {
+      this.type = "operator";
+      this.lengthTypeID = parseInt(binaryInput[bIndex + 1], 2);
+      bIndex += 1;
+
+      if (this.lengthTypeID === 0) {
+        this.subPacketLength = parseInt(
+          binaryInput.slice(bIndex, bIndex + 15),
+          2
+        );
+        bIndex += 15;
+
+        let subPacketLastIndex = bIndex + this.subPacketLength;
+        //console.log(subPacketLastIndex);
+
+        for (let i = bIndex; i < subPacketLastIndex; ) {
+          console.log(binaryInput.slice(i, subPacketLastIndex));
+          let subPacket = new Packet(i, subPacketLastIndex);
+          i = subPacket.finalIndex - 1;
+          bIndex = i + 1;
+          this.subPackets.push(subPacket);
+        }
+
+        //bIndex = subPacketLastIndex;
+        this.finalIndex = bIndex ;
+      }
     }
   }
 }
