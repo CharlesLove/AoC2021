@@ -35,8 +35,10 @@ class Packet {
 
       if (this.lengthTypeID === 0) {
         this.totalSubpacketLength = parseInt(bIn.slice(7, 22), 2);
-        let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
-        this.bitLength += subPacketSegment.length;
+				this.bitLength += 15 + this.totalSubpacketLength;
+        
+				let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
+
         console.log(subPacketSegment);
       } else {
         this.numberSubpackets = parseInt(bIn.slice(7, 18), 2);
