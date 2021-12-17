@@ -20,14 +20,16 @@ class Packet {
 
       for (let i = 6; i < bIn.length; i += 5) {
         litBinary += bIn.slice(i + 1, i + 5);
-				this.bitLength += 5;
+        this.bitLength += 5;
 
-        if (binaryInput[i] === "0") {
+        if (bIn[i] === "0") {
           break;
         }
       }
       //this.bitLength += litBinary.length;
       this.literalValue = parseInt(litBinary, 2);
+
+      packetArray.push(this);
     } else {
       this.type = "operator";
       this.lengthTypeID = parseInt(bIn[6], 2);
@@ -35,17 +37,28 @@ class Packet {
 
       if (this.lengthTypeID === 0) {
         this.totalSubpacketLength = parseInt(bIn.slice(7, 22), 2);
-				this.bitLength += 15 + this.totalSubpacketLength;
-        
-				let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
+        this.bitLength += 15 + this.totalSubpacketLength;
 
-        console.log(subPacketSegment);
+        packetArray.push(this);
+
+        let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
+        let subPacketBitsSoFar = 0;
+
+        while (subPacketSegment.length > 0) {
+          subPacketSegment = subPacketSegment.slice(subPacketBitsSoFar);
+					console.log("subpacketsegment:");
+          console.log(subPacketSegment);
+          console.log("subpacketbitssofar:");
+          console.log(subPacketBitsSoFar);
+          let subPacket = new Packet(subPacketSegment);
+          subPacketBitsSoFar += subPacket.bitLength;
+          console.log("literal value:");
+          console.log(subPacket.literalValue);
+        }
       } else {
         this.numberSubpackets = parseInt(bIn.slice(7, 18), 2);
       }
     }
-
-    packetArray.push(this);
   }
 }
 
