@@ -1,8 +1,88 @@
-// Run something similar to this for better time keeping
-// time node day16/day16.js 3
+class Packet {
+  parent;
+  version;
+  typeID;
+  type;
+  literalValue;
+  lengthTypeID;
+  totalSubpacketLength;
+  numberSubpackets;
+  bitLength;
 
-// try using node's readline feature next time to prevent needing to store the entire
-// .txt in memory
+  constructor(bIn) {
+    // an empty bIn shouldn't be getting in
+    // TODO: figure out and stop empty bIn
+    // from being using in class creation
+
+    //if (bIn === "") return;
+    this.version = parseInt(bIn.slice(0, 3), 2);
+    this.typeID = parseInt(bIn.slice(3, 6), 2);
+    this.bitLength = 6;
+    if (this.typeID === 4) {
+      this.type = "literal";
+
+      let litBinary = "";
+
+      for (let i = 6; i < bIn.length; i += 5) {
+        litBinary += bIn.slice(i + 1, i + 5);
+        this.bitLength += 5;
+
+        if (bIn[i] === "0") {
+          break;
+        }
+      }
+      //this.bitLength += litBinary.length;
+      this.literalValue = parseInt(litBinary, 2);
+
+      globalPacketArray.push(this);
+    } else {
+      this.type = "operator";
+      this.lengthTypeID = parseInt(bIn[6], 2);
+      this.bitLength += 1;
+
+      if (this.lengthTypeID === 0) {
+        this.totalSubpacketLength = parseInt(bIn.slice(7, 22), 2);
+        this.bitLength += 15 + this.totalSubpacketLength;
+
+        globalPacketArray.push(this);
+
+        let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
+        let subPacketBitsSoFar = 0;
+        let thisSegment = subPacketSegment;
+
+        while (thisSegment.length > 0) {
+          let subPacket = new Packet(thisSegment);
+          subPacketBitsSoFar += subPacket.bitLength;
+          thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
+        }
+      } else {
+        this.numberSubpackets = parseInt(bIn.slice(7, 18), 2);
+        this.bitLength += 11;
+
+        globalPacketArray.push(this);
+        let thisIndex = globalPacketArray.length;
+
+        // the rest of this bit length won't be known until the sub
+        // packets are complete, so change it in the array after sub
+        // packets
+        let subPacketSegment = bIn.slice(18);
+        let subPacketBitsSoFar = 0;
+
+        for (let i = 0; i < this.numberSubpackets; i++) {
+          let thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
+
+          let subPacket = new Packet(thisSegment);
+          subPacketBitsSoFar += subPacket.bitLength;
+        }
+
+        // this is automagically modifying the array item as well
+        this.bitLength += subPacketBitsSoFar;
+
+        //globalPacketArray[thisIndex] = this;
+      }
+    }
+  }
+}
 
 let fs = require("fs");
 var myArgs = process.argv.slice(2);
@@ -11,15 +91,30 @@ let filename = "";
 let filePicker = parseInt(myArgs[0]);
 
 switch (filePicker) {
-  case 0:
+  case 1:
     filename = "day16/test_input1.txt";
     break;
-  case 1:
+  case 2:
     filename = "day16/test_input2.txt";
     break;
-  // case 1:
-  //   filename = "day16/input.txt";
-  //   break;
+  case 3:
+    filename = "day16/test_input3.txt";
+    break;
+  case 4:
+    filename = "day16/sum_test1.txt";
+    break;
+  case 5:
+    filename = "day16/sum_test2.txt";
+    break;
+  case 6:
+    filename = "day16/sum_test3.txt";
+    break;
+  case 7:
+    filename = "day16/sum_test4.txt";
+    break;
+  case 10:
+    filename = "day16/input.txt";
+    break;
   // case 2:
   //   filename = "day16/big.boy";
   //   break;
@@ -32,33 +127,12 @@ input = input.split("\n");
 input = input.filter((e) => e);
 input = input[0];
 
-console.log(input);
+let globalBinaryInput = hexToBinary(input);
+
+let globalPacketArray = [];
 
 console.log("---Part 1---");
 calculatePartOne();
-console.log("---Part 2---");
-calculatePartTwo();
-
-function numSort(a, b) {
-  return +a - +b;
-}
-
-function calculatePartOne() {
-  let binaryInput = hexToBinary(input);
-  console.log(binaryInput);
-
-  let finished = false;
-
-  // [finished?, packet, lengthLeft, packetsLeft]
-  let nextStep = [false, binaryInput, binaryInput.length, 1];
-  while (!finished) {
-    nextStep = readPacket(nextStep[1], nextStep[2], nextStep[3]);
-
-    finished = nextStep[0];
-    console.log(finished);
-  }
-}
-function calculatePartTwo() {}
 
 function hexToBinary(hexString) {
   let binaryString = "";
@@ -117,60 +191,22 @@ function hexToBinary(hexString) {
   return binaryString;
 }
 
-function readPacket(packet, lengthLeft, packetsLeft) {
-  let packetVersion = parseInt(packet.slice(0, 3), 2);
-  let typeID = parseInt(packet.slice(3, 6), 2);
-  console.log(packetVersion);
-  console.log(typeID);
+function calculatePartOne() {
+  console.log(globalBinaryInput.length);
+  packetGeneration(globalBinaryInput);
 
-  let remainingPacket = packet;
+  console.log(globalPacketArray);
+  console.log(globalPacketArray.length);
 
-  // literal value
-  if (typeID === 4) {
-    packetsLeft -= 1;
-    let literalBinary = "";
-    for (let i = 6; i < lengthLeft; i += 5) {
-      let subValue = packet.slice(i + 1, i + 5);
-      literalBinary += subValue;
+  let versionSum = 0;
 
-      lengthLeft--;
+  globalPacketArray.forEach((packet) => {
+    versionSum += packet.version;
+  });
 
-      if (packet[i] === "0") {
-        remainingPacket = remainingPacket.slice(i + 1);
-        console.log("remainingPacket");
-        console.log(remainingPacket);
-        break;
-      }
-    }
+  console.log(versionSum);
+}
 
-    // for test input 1:
-    // 2021
-    console.log(literalBinary);
-    console.log(parseInt(literalBinary, 2));
-    if (lengthLeft > 0 && remainingPacket !== "") {
-      return [false, remainingPacket, lengthLeft, packetsLeft];
-    } else {
-      return [true, "", lengthLeft, packetsLeft];
-    }
-  }
-  // operator
-  else {
-    let lengthTypeID = packet[6];
-    console.log(lengthTypeID);
-    let totalLength, subPacketNumber;
-    let subPacket = [];
-    if (lengthTypeID === "0") {
-      totalLength = packet.slice(7, 7 + 15);
-      console.log(totalLength);
-      totalLength = parseInt(totalLength, 2);
-      console.log(totalLength);
-      return [
-        false,
-        packet.slice(7 + 15, 7 + 15 + totalLength),
-        totalLength,
-        packetsLeft,
-      ];
-    } else {
-    }
-  }
+function packetGeneration(binInput) {
+  let originalPacket = new Packet(binInput);
 }
