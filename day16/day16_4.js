@@ -14,7 +14,7 @@ class Packet {
     // TODO: figure out and stop empty bIn
     // from being using in class creation
 
-    if (bIn === "") return;
+    //if (bIn === "") return;
     this.version = parseInt(bIn.slice(0, 3), 2);
     this.typeID = parseInt(bIn.slice(3, 6), 2);
     this.bitLength = 6;
@@ -48,14 +48,14 @@ class Packet {
 
         let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
         let subPacketBitsSoFar = 0;
+        let thisSegment = subPacketSegment;
 
-        while (subPacketSegment.length > 0) {
-          subPacketSegment = subPacketSegment.slice(subPacketBitsSoFar);
-
-          let subPacket = new Packet(subPacketSegment);
+        while (thisSegment.length > 0) {
+					
+					let subPacket = new Packet(thisSegment);
           subPacketBitsSoFar += subPacket.bitLength;
+          thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
         }
-        return;
       } else {
         this.numberSubpackets = parseInt(bIn.slice(7, 18), 2);
         this.bitLength += 11;
@@ -205,7 +205,7 @@ function calculatePartOne() {
     versionSum += packet.version;
   });
 
-	console.log(versionSum);
+  console.log(versionSum);
 }
 
 function packetGeneration(binInput) {
