@@ -10,6 +10,11 @@ class Packet {
   bitLength;
 
   constructor(bIn) {
+    // an empty bIn shouldn't be getting in
+    // TODO: figure out and stop empty bIn
+    // from being using in class creation
+
+    if (bIn === "") return;
     this.version = parseInt(bIn.slice(0, 3), 2);
     this.typeID = parseInt(bIn.slice(3, 6), 2);
     this.bitLength = 6;
@@ -29,7 +34,7 @@ class Packet {
       //this.bitLength += litBinary.length;
       this.literalValue = parseInt(litBinary, 2);
 
-      packetArray.push(this);
+      globalPacketArray.push(this);
     } else {
       this.type = "operator";
       this.lengthTypeID = parseInt(bIn[6], 2);
@@ -39,24 +44,41 @@ class Packet {
         this.totalSubpacketLength = parseInt(bIn.slice(7, 22), 2);
         this.bitLength += 15 + this.totalSubpacketLength;
 
-        packetArray.push(this);
+        globalPacketArray.push(this);
 
         let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
         let subPacketBitsSoFar = 0;
 
         while (subPacketSegment.length > 0) {
           subPacketSegment = subPacketSegment.slice(subPacketBitsSoFar);
-					console.log("subpacketsegment:");
-          console.log(subPacketSegment);
-          console.log("subpacketbitssofar:");
-          console.log(subPacketBitsSoFar);
+
           let subPacket = new Packet(subPacketSegment);
           subPacketBitsSoFar += subPacket.bitLength;
-          console.log("literal value:");
-          console.log(subPacket.literalValue);
         }
+        return;
       } else {
         this.numberSubpackets = parseInt(bIn.slice(7, 18), 2);
+        this.bitLength += 11;
+
+        globalPacketArray.push(this);
+        let thisIndex = globalPacketArray.length;
+
+        // the rest of this bit length won't be known until the sub
+        // packets are complete, so change it in the array after sub
+        // packets
+        let subPacketSegment = bIn.slice(18);
+        let subPacketBitsSoFar = 0;
+
+        for (let i = 0; i < this.numberSubpackets; i++) {
+          let thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
+
+          let subPacket = new Packet(thisSegment);
+          subPacketBitsSoFar += subPacket.bitLength;
+        }
+
+        this.bitLength += subPacketBitsSoFar;
+
+        //globalPacketArray[thisIndex] = this;
       }
     }
   }
@@ -105,9 +127,9 @@ input = input.split("\n");
 input = input.filter((e) => e);
 input = input[0];
 
-let binaryInput = hexToBinary(input);
+let globalBinaryInput = hexToBinary(input);
 
-let packetArray = [];
+let globalPacketArray = [];
 
 console.log("---Part 1---");
 calculatePartOne();
@@ -170,11 +192,11 @@ function hexToBinary(hexString) {
 }
 
 function calculatePartOne() {
-  console.log(binaryInput.length);
-  packetGeneration(binaryInput);
+  console.log(globalBinaryInput.length);
+  packetGeneration(globalBinaryInput);
 
-  console.log(packetArray);
-  console.log(packetArray.length);
+  console.log(globalPacketArray);
+  console.log(globalPacketArray.length);
 }
 
 function packetGeneration(binInput) {
