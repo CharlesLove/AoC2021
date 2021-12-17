@@ -43,8 +43,8 @@ input = input.filter((e) => e);
 input = input[0];
 
 let binaryInput = hexToBinary(input);
-console.log(binaryInput);
-console.log(binaryInput.length);
+//console.log(binaryInput);
+//console.log(binaryInput.length);
 
 //let packetCollection = new Map();
 
@@ -68,7 +68,9 @@ class Packet {
 
     this.version += parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
 
-    this.versionSum += this.version;
+    if (!isNaN(this.version)) {
+      this.versionSum += this.version;
+    }
     bIndex += 3;
     this.typeID = parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
     bIndex += 3;
@@ -110,13 +112,19 @@ class Packet {
         //console.log(subPacketLastIndex);
 
         for (let i = bIndex; i < subPacketLastIndex; ) {
-          console.log(binaryInput.slice(i, subPacketLastIndex));
+          //console.log(binaryInput.slice(i, subPacketLastIndex));
           let subPacket = new Packet(i, subPacketLastIndex);
           i = subPacket.finalIndex - 1;
           bIndex = i + 1;
-          this.subPackets.push(subPacket);
-          this.versionSum += subPacket.versionSum;
-          if (bIndex > binaryInput.length - 11) {
+          if (!isNaN(subPacket.versionSum)) {
+						this.subPackets.push(subPacket);
+            this.versionSum += subPacket.versionSum;
+          }
+					else{
+						break;
+					}
+          if (bIndex >= binaryInput.length - 11) {
+						console.log(subPacket);
             break;
           }
         }
@@ -124,7 +132,7 @@ class Packet {
         //bIndex = subPacketLastIndex;
         this.finalIndex = bIndex;
       } else {
-        console.log(bIndex);
+        //console.log(bIndex);
         //console.log(binaryInput.slice(bIndex, bIndex + 11));
         this.subPacketCount = parseInt(
           binaryInput.slice(bIndex, bIndex + 11),
@@ -138,11 +146,14 @@ class Packet {
         for (let i = 0; i < this.subPacketCount; i++) {
           //console.log(binaryInput.slice(bIndex, binaryInput.length));
           let subPacket = new Packet(bIndex, binaryInput.length);
-          this.subPackets.push(subPacket);
-
+					
           bIndex = subPacket.finalIndex - 1;
-          this.versionSum += subPacket.versionSum;
-          if (bIndex > binaryInput.length - 11) {
+          if (!isNaN(subPacket.versionSum)) {
+						this.subPackets.push(subPacket);
+            this.versionSum += subPacket.versionSum;
+          }
+          if (bIndex >= binaryInput.length - 11) {
+						console.log(subPacket)
             break;
           }
         }
