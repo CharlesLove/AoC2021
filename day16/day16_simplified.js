@@ -2,6 +2,8 @@ let fs = require("fs");
 const { exit } = require("process");
 var myArgs = process.argv.slice(2);
 let filename = "";
+let globalVersion = 0;
+let globalPacketCount = 0;
 
 let filePicker = parseInt(myArgs[0]);
 
@@ -60,6 +62,7 @@ class Packet {
   finalIndex;
   versionSum = 0;
   constructor(bStart, bEnd) {
+    globalPacketCount += 1;
     //console.log(binaryInput.slice(bStart, bEnd));
     if (bEnd === undefined) bEnd = binaryInput.length;
 
@@ -69,6 +72,7 @@ class Packet {
     this.version += parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
 
     if (!isNaN(this.version)) {
+      globalVersion += this.version;
       this.versionSum += this.version;
     }
     bIndex += 3;
@@ -116,16 +120,12 @@ class Packet {
           let subPacket = new Packet(i, subPacketLastIndex);
           i = subPacket.finalIndex - 1;
           bIndex = i + 1;
-          if (!isNaN(subPacket.versionSum)) {
-						this.subPackets.push(subPacket);
-            this.versionSum += subPacket.versionSum;
-          }
-					else{
-						break;
-					}
-          if (bIndex >= binaryInput.length - 11) {
-						console.log(subPacket);
+
+          if (!isValidBIndex(bIndex) || subPacket.versionSum === undefined) {
             break;
+          } else {
+            this.versionSum += subPacket.versionSum;
+            this.subPackets.push(subPacket);
           }
         }
 
@@ -146,15 +146,16 @@ class Packet {
         for (let i = 0; i < this.subPacketCount; i++) {
           //console.log(binaryInput.slice(bIndex, binaryInput.length));
           let subPacket = new Packet(bIndex, binaryInput.length);
-					
+
           bIndex = subPacket.finalIndex - 1;
-          if (!isNaN(subPacket.versionSum)) {
-						this.subPackets.push(subPacket);
-            this.versionSum += subPacket.versionSum;
-          }
-          if (bIndex >= binaryInput.length - 11) {
-						console.log(subPacket)
+          console.log(`bindex: ${bIndex}`);
+
+          if (!isValidBIndex(bIndex) || subPacket.versionSum === undefined) {
+            this.subPackets.pop();
             break;
+          } else {
+            this.versionSum += subPacket.versionSum;
+            this.subPackets.push(subPacket);
           }
         }
 
@@ -174,9 +175,21 @@ function numSort(a, b) {
   return +a - +b;
 }
 
+function isValidBIndex(bIndex) {
+  if (bIndex >= binaryInput.length - 11) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function calculatePartOne() {
+  console.log(binaryInput.length);
   let originalPacket = new Packet(0, binaryInput.length);
   console.log(originalPacket);
+
+  console.log(globalVersion);
+  console.log(globalPacketCount);
 }
 
 function hexToBinary(hexString) {
