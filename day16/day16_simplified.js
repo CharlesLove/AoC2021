@@ -49,7 +49,7 @@ console.log(binaryInput.length);
 //let packetCollection = new Map();
 
 class Packet {
-  version;
+  version = 0;
   typeID;
   type;
   literalValue;
@@ -58,6 +58,7 @@ class Packet {
   subPacketCount;
   subPackets = [];
   finalIndex;
+  versionSum = 0;
   constructor(bStart, bEnd) {
     //console.log(binaryInput.slice(bStart, bEnd));
     if (bEnd === undefined) bEnd = binaryInput.length;
@@ -65,7 +66,9 @@ class Packet {
     // bIndex allow you to know where in the binary you are
     let bIndex = bStart;
 
-    this.version = parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
+    this.version += parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
+
+    this.versionSum += this.version;
     bIndex += 3;
     this.typeID = parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
     bIndex += 3;
@@ -95,6 +98,12 @@ class Packet {
           binaryInput.slice(bIndex, bIndex + 15),
           2
         );
+
+        // if (isNaN(this.subPacketLength)) {
+        //   console.log("Subpacket length is NaN");
+        //   console.log(binaryInput.slice(bIndex));
+        //   this.subPacketLength = 0;
+        // }
         bIndex += 15;
 
         let subPacketLastIndex = bIndex + this.subPacketLength;
@@ -106,12 +115,16 @@ class Packet {
           i = subPacket.finalIndex - 1;
           bIndex = i + 1;
           this.subPackets.push(subPacket);
+          this.versionSum += subPacket.versionSum;
+          if (bIndex > binaryInput.length - 11) {
+            break;
+          }
         }
 
         //bIndex = subPacketLastIndex;
         this.finalIndex = bIndex;
       } else {
-				console.log(bIndex);
+        console.log(bIndex);
         //console.log(binaryInput.slice(bIndex, bIndex + 11));
         this.subPacketCount = parseInt(
           binaryInput.slice(bIndex, bIndex + 11),
@@ -128,6 +141,10 @@ class Packet {
           this.subPackets.push(subPacket);
 
           bIndex = subPacket.finalIndex - 1;
+          this.versionSum += subPacket.versionSum;
+          if (bIndex > binaryInput.length - 11) {
+            break;
+          }
         }
 
         //bIndex = subPacketLastIndex;
