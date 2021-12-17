@@ -76,6 +76,7 @@ class Packet {
           subPacketBitsSoFar += subPacket.bitLength;
         }
 
+        // this is automagically modifying the array item as well
         this.bitLength += subPacketBitsSoFar;
 
         //globalPacketArray[thisIndex] = this;
@@ -197,6 +198,14 @@ function calculatePartOne() {
 
   console.log(globalPacketArray);
   console.log(globalPacketArray.length);
+
+  let versionSum = 0;
+
+  globalPacketArray.forEach((packet) => {
+    versionSum += packet.version;
+  });
+
+	console.log(versionSum);
 }
 
 function packetGeneration(binInput) {
