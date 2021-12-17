@@ -15,12 +15,14 @@ class Packet {
   subPackets = [];
   maxLength;
   binaryLeftover;
+  versionSum = 0;
 
   constructor(binary, maxLength) {
     this.version = parseInt(binary.slice(0, 3), 2);
+    this.versionSum += this.version;
     this.typeID = parseInt(binary.slice(3, 6), 2);
     this.maxLength = maxLength;
-    let remainingBinary = binary.slice(6, this.maxLength);
+    let remainingBinary = binary.slice(6);
     // literal
     if (this.typeID === 4) {
       this.type = "literal";
@@ -52,10 +54,17 @@ class Packet {
         // create and add subpackets
         while (newMaxLength > 0) {
           let subPacket = new Packet(leftOverBinary, newMaxLength);
+          this.versionSum += subPacket.versionSum;
 
           this.subPackets.push(subPacket);
 
           leftOverBinary = subPacket.binaryLeftover;
+          if (leftOverBinary === undefined) {
+            console.log("ERROR: LEFTOVER BINARY IS UNDEFINED");
+            console.log(subPacket);
+            console.log("___________________________________");
+            break;
+          }
 
           newMaxLength = subPacket.binaryLeftover.length;
         }
@@ -64,14 +73,21 @@ class Packet {
       } else {
         this.subPacketNumImmContained = parseInt(binary.slice(7, 7 + 11), 2);
         leftOverBinary = binary.slice(7 + 11);
-        console.log(leftOverBinary);
+        //console.log(leftOverBinary);
 
         for (let i = 0; i < this.subPacketNumImmContained; i++) {
           let subPacket = new Packet(leftOverBinary, leftOverBinary.length);
+          this.versionSum += subPacket.versionSum;
 
           this.subPackets.push(subPacket);
 
           leftOverBinary = subPacket.binaryLeftover;
+          if (leftOverBinary === undefined) {
+            console.log("ERROR: LEFTOVER BINARY IS UNDEFINED");
+            console.log(subPacket);
+            console.log("___________________________________");
+            break;
+          }
         }
       }
     }
@@ -94,9 +110,21 @@ switch (filePicker) {
   case 3:
     filename = "day16/test_input3.txt";
     break;
-  // case 1:
-  //   filename = "day16/input.txt";
-  //   break;
+  case 4:
+    filename = "day16/sum_test1.txt";
+    break;
+  case 5:
+    filename = "day16/sum_test2.txt";
+    break;
+  case 6:
+    filename = "day16/sum_test3.txt";
+    break;
+  case 7:
+    filename = "day16/sum_test4.txt";
+    break;
+  case 10:
+    filename = "day16/input.txt";
+    break;
   // case 2:
   //   filename = "day16/big.boy";
   //   break;
@@ -111,9 +139,6 @@ input = input[0];
 
 let binaryInput = hexToBinary(input);
 
-console.log(input);
-console.log(binaryInput);
-
 console.log("---Part 1---");
 calculatePartOne();
 // console.log("---Part 2---");
@@ -125,7 +150,7 @@ function numSort(a, b) {
 
 function calculatePartOne() {
   let originalPacket = new Packet(binaryInput, binaryInput.length);
-  console.log(originalPacket);
+  console.log(originalPacket.versionSum);
 }
 
 function hexToBinary(hexString) {
