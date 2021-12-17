@@ -4,23 +4,43 @@ class Packet {
   typeID;
   type;
   literalValue;
+  lengthTypeID;
+  totalSubpacketLength;
+  numberSubpackets;
+  bitLength;
 
   constructor(bIn) {
     this.version = parseInt(bIn.slice(0, 3), 2);
     this.typeID = parseInt(bIn.slice(3, 6), 2);
+    this.bitLength = 6;
     if (this.typeID === 4) {
       this.type = "literal";
 
-			let litBinary = "";
+      let litBinary = "";
 
       for (let i = 6; i < bIn.length; i += 5) {
         litBinary += bIn.slice(i + 1, i + 5);
+				this.bitLength += 5;
 
         if (binaryInput[i] === "0") {
           break;
         }
       }
+      //this.bitLength += litBinary.length;
       this.literalValue = parseInt(litBinary, 2);
+    } else {
+      this.type = "operator";
+      this.lengthTypeID = parseInt(bIn[6], 2);
+      this.bitLength += 1;
+
+      if (this.lengthTypeID === 0) {
+        this.totalSubpacketLength = parseInt(bIn.slice(7, 22), 2);
+        let subPacketSegment = bIn.slice(22, 22 + this.totalSubpacketLength);
+        this.bitLength += subPacketSegment.length;
+        console.log(subPacketSegment);
+      } else {
+        this.numberSubpackets = parseInt(bIn.slice(7, 18), 2);
+      }
     }
 
     packetArray.push(this);
