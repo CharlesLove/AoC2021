@@ -131,15 +131,14 @@ function readPacket(packet, lengthLeft, packetsLeft) {
     let literalBinary = "";
     for (let i = 6; i < lengthLeft; i += 5) {
       let subValue = packet.slice(i + 1, i + 5);
-      remainingPacket = remainingPacket.slice(i + 5);
       literalBinary += subValue;
 
       lengthLeft--;
 
-      if (packet[i] === "0" && lengthLeft > 0 && packetsLeft > 0) {
+      if (packet[i] === "0") {
+        remainingPacket = remainingPacket.slice(i + 1);
         console.log("remainingPacket");
         console.log(remainingPacket);
-        packetsLeft += 1;
         break;
       }
     }
@@ -148,7 +147,7 @@ function readPacket(packet, lengthLeft, packetsLeft) {
     // 2021
     console.log(literalBinary);
     console.log(parseInt(literalBinary, 2));
-    if (lengthLeft > 0 && packetsLeft > 0) {
+    if (lengthLeft > 0 && remainingPacket !== "") {
       return [false, remainingPacket, lengthLeft, packetsLeft];
     } else {
       return [true, "", lengthLeft, packetsLeft];
