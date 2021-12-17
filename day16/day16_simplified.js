@@ -50,15 +50,37 @@ class Packet {
   version;
   typeID;
   type;
+  literalValue;
   lengthTypeID;
   subPacketLength;
   subPacketCount;
   subPackets = [];
   constructor(bStart, bEnd) {
     console.log(binaryInput.slice(bStart, bEnd));
+    if (bEnd === undefined) bEnd = binaryInput.length;
 
-    this.version = parseInt(binaryInput.slice(bStart, bStart + 3),2);
-		this.typeID = parseInt(binaryInput.slice(bStart+3,bStart+3+3),2);
+    // bIndex allow you to know where in the binary you are
+    let bIndex = bStart;
+
+    this.version = parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
+    bIndex += 3;
+    this.typeID = parseInt(binaryInput.slice(bIndex, bIndex + 3), 2);
+    bIndex += 3;
+
+    if (this.typeID === 4) {
+      this.type = "literal";
+
+      let litBinary = "";
+
+      for (let i = bIndex; i < bEnd; i += 5) {
+        litBinary += binaryInput.slice(i + 1, i + 5);
+
+        if (binaryInput[i] === "0") {
+          break;
+        }
+      }
+      this.literalValue = parseInt(litBinary, 2);
+    }
   }
 }
 
