@@ -12,12 +12,15 @@ class Packet {
   lengthTypeID;
   subPacketLength;
   subPacketNumImmContained;
-  subPacket = [];
+  subPackets = [];
+  maxLength;
+  binaryLeftover;
 
-  constructor(binary) {
+  constructor(binary, maxLength) {
     this.version = parseInt(binary.slice(0, 3), 2);
     this.typeID = parseInt(binary.slice(3, 6), 2);
-    let remainingBinary = binary.slice(6);
+    this.maxLength = maxLength;
+    let remainingBinary = binary.slice(6, this.maxLength);
     // literal
     if (this.typeID === 4) {
       this.type = "literal";
@@ -28,6 +31,7 @@ class Packet {
         literalBinary += subValue;
 
         if (remainingBinary[i] === "0") {
+          this.binaryLeftover = remainingBinary.slice(i + 5);
           break;
         }
       }
@@ -41,9 +45,22 @@ class Packet {
       if (this.lengthTypeID === 0) {
         this.subPacketLength = parseInt(binary.slice(7, 7 + 15), 2);
         leftOverBinary = binary.slice(7 + 15);
+        console.log(leftOverBinary);
+
+        let newMaxLength = this.subPacketLength;
 
         // create and add subpackets
-        console.log(leftOverBinary);
+        while (newMaxLength > 0) {
+          let subPacket = new Packet(leftOverBinary, newMaxLength);
+
+          this.subPackets.push(subPacket);
+
+          leftOverBinary = subPacket.binaryLeftover;
+
+          newMaxLength = subPacket.binaryLeftover.length;
+        }
+
+        //this.subPackets.push(subPacket);
       } else {
         this.subPacketNumImmContained = parseInt(binary.slice(7, 7 + 11), 2);
         leftOverBinary = binary.slice(7 + 11);
@@ -95,7 +112,7 @@ function numSort(a, b) {
 }
 
 function calculatePartOne() {
-  let originalPacket = new Packet(binaryInput);
+  let originalPacket = new Packet(binaryInput, binaryInput.length);
   console.log(originalPacket);
 }
 
