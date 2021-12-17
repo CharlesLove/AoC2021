@@ -1,14 +1,13 @@
 class Packet {
-  //parent;
+  type;
+  children;
   version;
   typeID;
-  type;
   literalValue;
   lengthTypeID;
   totalSubpacketLength;
   numberSubpackets;
   bitLength;
-  children;
 
   constructor(bIn) {
     // an empty bIn shouldn't be getting in
@@ -37,7 +36,33 @@ class Packet {
 
       globalPacketArray.push(this);
     } else {
-      this.type = "operator";
+      switch (this.typeID) {
+        case 0:
+          this.type = "sum";
+          break;
+        case 1:
+          this.type = "product";
+          break;
+        case 2:
+          this.type = "minimum";
+          break;
+        case 3:
+          this.type = "maximum";
+          break;
+        case 5:
+          this.type = "greater than";
+          break;
+        case 6:
+          this.type = "less than";
+          break;
+        case 7:
+          this.type = "equal to";
+          break;
+        default:
+          this.type = "operator";
+          break;
+      }
+
       this.lengthTypeID = parseInt(bIn[6], 2);
       this.bitLength += 1;
 
@@ -54,8 +79,8 @@ class Packet {
         this.children = [];
 
         while (thisSegment.length > 0) {
-          let subPacket = new Packet(thisSegment);
           this.children.push(globalPacketArray.length);
+          let subPacket = new Packet(thisSegment);
           subPacketBitsSoFar += subPacket.bitLength;
           thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
         }
@@ -74,9 +99,9 @@ class Packet {
         this.children = [];
 
         for (let i = 0; i < this.numberSubpackets; i++) {
+          this.children.push(globalPacketArray.length);
           let thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
           let subPacket = new Packet(thisSegment);
-          this.children.push(globalPacketArray.length);
           subPacketBitsSoFar += subPacket.bitLength;
         }
 
@@ -198,7 +223,6 @@ function hexToBinary(hexString) {
   return binaryString;
 }
 
-
 function packetGeneration(binInput) {
   let originalPacket = new Packet(binInput);
 }
@@ -218,6 +242,4 @@ function calculatePartOne() {
 
   console.log(versionSum);
 }
-function calculatePartTwo() {
-  
-}
+function calculatePartTwo() {}
