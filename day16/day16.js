@@ -1,5 +1,5 @@
 class Packet {
-  parent;
+  //parent;
   version;
   typeID;
   type;
@@ -8,6 +8,7 @@ class Packet {
   totalSubpacketLength;
   numberSubpackets;
   bitLength;
+  children;
 
   constructor(bIn) {
     // an empty bIn shouldn't be getting in
@@ -50,8 +51,11 @@ class Packet {
         let subPacketBitsSoFar = 0;
         let thisSegment = subPacketSegment;
 
+        this.children = [];
+
         while (thisSegment.length > 0) {
           let subPacket = new Packet(thisSegment);
+          this.children.push(globalPacketArray.length);
           subPacketBitsSoFar += subPacket.bitLength;
           thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
         }
@@ -67,11 +71,12 @@ class Packet {
         // packets
         let subPacketSegment = bIn.slice(18);
         let subPacketBitsSoFar = 0;
+        this.children = [];
 
         for (let i = 0; i < this.numberSubpackets; i++) {
           let thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
-
           let subPacket = new Packet(thisSegment);
+          this.children.push(globalPacketArray.length);
           subPacketBitsSoFar += subPacket.bitLength;
         }
 
@@ -133,6 +138,8 @@ let globalPacketArray = [];
 
 console.log("---Part 1---");
 calculatePartOne();
+console.log("---Part 2---");
+calculatePartTwo();
 
 function hexToBinary(hexString) {
   let binaryString = "";
@@ -191,12 +198,17 @@ function hexToBinary(hexString) {
   return binaryString;
 }
 
+
+function packetGeneration(binInput) {
+  let originalPacket = new Packet(binInput);
+}
+
 function calculatePartOne() {
-  console.log(globalBinaryInput.length);
+  //console.log(globalBinaryInput.length);
   packetGeneration(globalBinaryInput);
 
-  console.log(globalPacketArray);
-  console.log(globalPacketArray.length);
+  //console.log(globalPacketArray);
+  //console.log(globalPacketArray.length);
 
   let versionSum = 0;
 
@@ -206,7 +218,6 @@ function calculatePartOne() {
 
   console.log(versionSum);
 }
-
-function packetGeneration(binInput) {
-  let originalPacket = new Packet(binInput);
+function calculatePartTwo() {
+  
 }
