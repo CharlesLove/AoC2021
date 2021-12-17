@@ -51,8 +51,7 @@ class Packet {
         let thisSegment = subPacketSegment;
 
         while (thisSegment.length > 0) {
-					
-					let subPacket = new Packet(thisSegment);
+          let subPacket = new Packet(thisSegment);
           subPacketBitsSoFar += subPacket.bitLength;
           thisSegment = subPacketSegment.slice(subPacketBitsSoFar);
         }
