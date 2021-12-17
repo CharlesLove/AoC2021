@@ -76,11 +76,14 @@ let filename = "";
 let filePicker = parseInt(myArgs[0]);
 
 switch (filePicker) {
-  case 0:
+  case 1:
     filename = "day16/test_input1.txt";
     break;
-  case 1:
+  case 2:
     filename = "day16/test_input2.txt";
+    break;
+  case 3:
+    filename = "day16/test_input3.txt";
     break;
   // case 1:
   //   filename = "day16/input.txt";
