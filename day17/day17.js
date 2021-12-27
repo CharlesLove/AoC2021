@@ -9,7 +9,7 @@ var myArgs = process.argv.slice(2);
 let filename = "";
 let targetX1, targetX2, targetY1, targetY2;
 let maxHeight = 0;
-let distinctHits = new Set();
+let distinctHitCount = 0;
 
 let inputPicker = parseInt(myArgs[0]);
 
@@ -27,6 +27,20 @@ switch (inputPicker) {
     targetX2 = 50;
     targetY1 = -267;
     targetY2 = -225;
+    break;
+  case 2:
+    filename = "Big Boy 1";
+    targetX1 = 117;
+    targetX2 = 7310;
+    targetY1 = -9546;
+    targetY2 = -89;
+    break;
+  case 3:
+    filename = "Big Boy 2";
+    targetX1 = 50842;
+    targetX2 = 144383;
+    targetY1 = -187041;
+    targetY2 = -90458;
     break;
 }
 
@@ -47,6 +61,8 @@ function shootProbe(initXVel, initYVel) {
   let curX = 0,
     curY = 0,
     maxPotHeight = 0;
+
+  let hitYet = false;
   while (curX < targetX2 && curY > targetY1) {
     // The probe's x position increases by its x velocity.
     curX += curXVel;
@@ -73,7 +89,10 @@ function shootProbe(initXVel, initYVel) {
       curY >= targetY1 &&
       curY <= targetY2
     ) {
-      distinctHits.add([initXVel, initYVel].toString());
+      if (!hitYet) {
+        distinctHitCount++;
+        hitYet = true;
+      }
       if (maxPotHeight > maxHeight) {
         maxHeight = maxPotHeight;
       }
@@ -90,5 +109,5 @@ function calculatePartOne() {
   console.log(maxHeight);
 }
 function calculatePartTwo() {
-  console.log(distinctHits.size);
+  console.log(distinctHitCount);
 }
