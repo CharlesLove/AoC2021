@@ -73,6 +73,7 @@ function shootProbe(initXVel, initYVel) {
       curY >= targetY1 &&
       curY <= targetY2
     ) {
+      distinctHits.add([initXVel, initYVel].toString());
       if (maxPotHeight > maxHeight) {
         maxHeight = maxPotHeight;
       }
@@ -82,18 +83,12 @@ function shootProbe(initXVel, initYVel) {
 
 function calculatePartOne() {
   for (let newXVel = 0; newXVel <= targetX2; newXVel++) {
-    for (let newYVel = 0; newYVel <= Math.abs(targetY1); newYVel++) {
+    for (let newYVel = targetY1; newYVel <= Math.abs(targetY1); newYVel++) {
       shootProbe(newXVel, newYVel);
     }
   }
   console.log(maxHeight);
 }
 function calculatePartTwo() {
-  for (let newXVel = -targetX2; newXVel <= targetX2; newXVel++) {
-    for (let newYVel = targetY2; newYVel <= Math.abs(targetY1); newYVel++) {
-      shootProbe(newXVel, newYVel);
-    }
-  }
-  console.log(distinctHits);
   console.log(distinctHits.size);
 }
