@@ -9,6 +9,7 @@ var myArgs = process.argv.slice(2);
 let filename = "";
 let targetX1, targetX2, targetY1, targetY2;
 let maxHeight = 0;
+let distinctHits = new Set();
 
 let inputPicker = parseInt(myArgs[0]);
 
@@ -41,14 +42,16 @@ function numSort(a, b) {
 }
 
 function shootProbe(initXVel, initYVel) {
+  let curXVel = initXVel;
+  let curYVel = initYVel;
   let curX = 0,
     curY = 0,
     maxPotHeight = 0;
   while (curX < targetX2 && curY > targetY1) {
     // The probe's x position increases by its x velocity.
-    curX += initXVel;
+    curX += curXVel;
     // The probe's y position increases by its y velocity.
-    curY += initYVel;
+    curY += curYVel;
 
     // figure out if max height has been reached
     if (curY > maxPotHeight) {
@@ -56,10 +59,10 @@ function shootProbe(initXVel, initYVel) {
     }
 
     // Due to drag, the probe's x velocity changes by 1 toward the value 0
-    initXVel -= 1;
-    if (initXVel < 0) initXVel = 0;
+    curXVel -= 1;
+    if (curXVel < 0) curXVel = 0;
     // Due to gravity, the probe's y velocity decreases by 1.
-    initYVel -= 1;
+    curYVel -= 1;
 
     //console.log(`X: ${curX}, Y: ${curY}`);
 
@@ -78,7 +81,6 @@ function shootProbe(initXVel, initYVel) {
 }
 
 function calculatePartOne() {
-  shootProbe(7, 2);
   for (let newXVel = 0; newXVel <= targetX2; newXVel++) {
     for (let newYVel = 0; newYVel <= Math.abs(targetY1); newYVel++) {
       shootProbe(newXVel, newYVel);
@@ -86,4 +88,12 @@ function calculatePartOne() {
   }
   console.log(maxHeight);
 }
-function calculatePartTwo() {}
+function calculatePartTwo() {
+  for (let newXVel = -targetX2; newXVel <= targetX2; newXVel++) {
+    for (let newYVel = targetY2; newYVel <= Math.abs(targetY1); newYVel++) {
+      shootProbe(newXVel, newYVel);
+    }
+  }
+  console.log(distinctHits);
+  console.log(distinctHits.size);
+}
